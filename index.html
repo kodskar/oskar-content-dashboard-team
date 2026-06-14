@@ -1,0 +1,1919 @@
+<!doctype html>
+<html lang="no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Oskar Content Dashboard</title>
+  <style>
+    :root {
+      --bg: #f6f4ee;
+      --panel: #ffffff;
+      --ink: #172026;
+      --muted: #5f6970;
+      --line: #d8d3c8;
+      --green: #2f6f5e;
+      --blue: #2b5c88;
+      --gold: #b98218;
+      --red: #a84646;
+      --green-soft: #e8f2ee;
+      --blue-soft: #e8f0f8;
+      --gold-soft: #fbf2d9;
+      --red-soft: #f7e9e7;
+      --shadow: 0 14px 40px rgba(23, 32, 38, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      letter-spacing: 0;
+    }
+
+    button, select, input {
+      font: inherit;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+    }
+
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 28px 22px;
+      border-right: 1px solid var(--line);
+      background: #fbfaf6;
+      overflow-y: auto;
+    }
+
+    main {
+      padding: 32px 42px 64px;
+      overflow-x: hidden;
+    }
+
+    .brand {
+      margin-bottom: 26px;
+    }
+
+    .brand h1 {
+      margin: 0 0 8px;
+      font-size: 26px;
+      line-height: 1.05;
+    }
+
+    .brand p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .nav {
+      display: grid;
+      gap: 8px;
+      margin: 18px 0 28px;
+    }
+
+    .nav button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 12px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      color: var(--ink);
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .nav button.active {
+      background: var(--ink);
+      color: #fff;
+    }
+
+    .nav .icon {
+      width: 20px;
+      text-align: center;
+      font-size: 15px;
+    }
+
+    .side-block {
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+      margin-top: 20px;
+    }
+
+    .side-block h2 {
+      margin: 0 0 12px;
+      font-size: 13px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .rule {
+      margin: 0;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      font-size: 14px;
+      line-height: 1.38;
+    }
+
+    .topline {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 26px;
+    }
+
+    .topline h2 {
+      margin: 0;
+      font-size: 42px;
+      line-height: 1.02;
+    }
+
+    .topline p {
+      max-width: 720px;
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.45;
+    }
+
+    .date-pill {
+      flex: 0 0 auto;
+      padding: 10px 13px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .kpi {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px 16px 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .kpi strong {
+      display: block;
+      font-size: 32px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .kpi span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.25;
+    }
+
+    .visual-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 22px;
+      margin-top: 10px;
+    }
+
+    figure {
+      margin: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    figure img {
+      width: 100%;
+      display: block;
+    }
+
+    figcaption {
+      padding: 13px 16px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(220px, 1.5fr) repeat(6, minmax(125px, 1fr));
+      gap: 12px;
+      align-items: center;
+      margin: 12px 0 22px;
+    }
+
+    .toolbar input,
+    .toolbar select {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      padding: 0 12px;
+    }
+
+    .funnel {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(220px, 1fr));
+      gap: 16px;
+      align-items: start;
+    }
+
+    .shootlist {
+      margin: 0 0 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .shootlist-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .shootlist-head h3 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .shootlist-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .ghost-btn,
+    .select-btn,
+    .copy-btn {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      padding: 9px 12px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .select-btn {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+
+    .select-btn.selected {
+      background: var(--red);
+      border-color: var(--red);
+    }
+
+    .shootlist-body {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(200px, 1fr));
+      gap: 12px;
+      padding: 14px;
+    }
+
+    .export-text {
+      width: calc(100% - 28px);
+      min-height: 150px;
+      margin: 0 14px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfaf6;
+      color: var(--ink);
+      padding: 12px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      line-height: 1.45;
+      resize: vertical;
+    }
+
+    .modal-body .export-text {
+      width: 100%;
+      margin: 0;
+      min-height: 130px;
+    }
+
+    .lane {
+      min-height: 540px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.6);
+      padding: 12px;
+    }
+
+    .lane h3 {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0 0 12px;
+      font-size: 18px;
+    }
+
+    .lane h3 span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+	    .idea-card {
+	      width: 100%;
+	      margin: 0 0 10px;
+	      padding: 13px;
+      border: 1px solid var(--line);
+      border-left-width: 5px;
+      border-radius: 8px;
+      background: #fff;
+      text-align: left;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(23, 32, 38, 0.05);
+    }
+
+    .idea-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(23, 32, 38, 0.10);
+    }
+
+    .idea-card.selected {
+      outline: 3px solid rgba(47, 111, 94, 0.25);
+	      background: #fbfffd;
+	    }
+
+	    .card-top {
+	      display: flex;
+	      align-items: center;
+	      justify-content: space-between;
+	      gap: 10px;
+	    }
+
+	    .quick-select {
+	      flex: 0 0 auto;
+	      border: 1px solid var(--line);
+	      border-radius: 7px;
+	      background: #fff;
+	      color: var(--ink);
+	      padding: 6px 9px;
+	      cursor: pointer;
+	      font-size: 12px;
+	      font-weight: 800;
+	    }
+
+	    .quick-select.on {
+	      border-color: var(--green);
+	      background: var(--green);
+	      color: #fff;
+	    }
+
+	    .idea-card h4 {
+	      margin: 8px 0 8px;
+	      font-size: 16px;
+      line-height: 1.22;
+    }
+
+    .idea-card .id {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .04em;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 3px 7px;
+      border-radius: 6px;
+      background: #f2f0e9;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tag.priority-now { background: var(--green-soft); color: var(--green); }
+    .tag.priority-sf { background: var(--blue-soft); color: var(--blue); }
+    .tag.priority-strong { background: var(--gold-soft); color: var(--gold); }
+    .tag.priority-consider { background: var(--red-soft); color: var(--red); }
+    .tag.selected-tag { background: var(--green); color: #fff; }
+    .tag.film-now { background: var(--green-soft); color: var(--green); }
+    .tag.film-sf { background: var(--blue-soft); color: var(--blue); }
+    .tag.film-partial { background: var(--gold-soft); color: var(--gold); }
+
+    .all-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(250px, 1fr));
+      gap: 14px;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .phase {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 18px;
+      min-height: 220px;
+      box-shadow: var(--shadow);
+    }
+
+    .phase h3 {
+      margin: 0 0 12px;
+      font-size: 22px;
+    }
+
+    .phase ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .summary-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin: 0 0 22px;
+    }
+
+    .summary-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 16px;
+      line-height: 1.38;
+      box-shadow: var(--shadow);
+    }
+
+    .summary-card b {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .summary-card span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .image-fallback {
+      display: none;
+      padding: 26px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    dialog {
+      width: min(980px, calc(100vw - 36px));
+      max-height: calc(100vh - 36px);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0;
+      box-shadow: 0 28px 90px rgba(23, 32, 38, 0.28);
+      overflow: auto;
+    }
+
+    dialog::backdrop {
+      background: rgba(23, 32, 38, 0.42);
+    }
+
+    .modal-head {
+      padding: 24px 26px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .modal-head h3 {
+      margin: 8px 0 0;
+      font-size: 28px;
+      line-height: 1.1;
+    }
+
+    .modal-body {
+      padding: 22px 26px 26px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .detail {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fbfaf6;
+    }
+
+    .detail b {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .detail span {
+      font-size: 15px;
+      line-height: 1.35;
+    }
+
+    .modal-copy {
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      line-height: 1.5;
+      color: var(--ink);
+    }
+
+    .modal-section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 15px 18px;
+    }
+
+    .modal-section h4 {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+
+    .modal-section ul {
+      margin: 0;
+      padding-left: 20px;
+      line-height: 1.48;
+      color: var(--ink);
+    }
+
+    .modal-section li + li {
+      margin-top: 6px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 16px 26px 22px;
+      border-top: 1px solid var(--line);
+    }
+
+    .modal-action-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .close {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--ink);
+      color: #fff;
+      padding: 10px 14px;
+      cursor: pointer;
+    }
+
+    .empty {
+      padding: 18px;
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      background: rgba(255,255,255,0.55);
+      text-align: center;
+    }
+
+    @media (max-width: 1180px) {
+      .app { grid-template-columns: 1fr; }
+      aside {
+        position: relative;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+      }
+      .nav { grid-template-columns: repeat(4, 1fr); }
+      main { padding: 28px 22px 48px; }
+      .kpis { grid-template-columns: repeat(3, 1fr); }
+      .toolbar { grid-template-columns: 1fr 1fr; }
+      .funnel { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
+      .shootlist-body { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
+      .all-grid { grid-template-columns: repeat(2, minmax(240px, 1fr)); }
+      .timeline { grid-template-columns: 1fr; }
+      .summary-strip { grid-template-columns: 1fr; }
+    }
+
+	    @media (max-width: 720px) {
+	      .topline { display: block; }
+	      .topline h2 { font-size: 32px; }
+	      .date-pill { display: inline-block; margin-top: 16px; }
+      .nav { grid-template-columns: 1fr 1fr; }
+      .kpis,
+      .toolbar,
+      .funnel,
+      .shootlist-body,
+      .all-grid,
+      .detail-grid { grid-template-columns: 1fr; }
+	      .lane { min-height: auto; }
+	    }
+
+	    /* Simple team view */
+	    .app {
+	      display: block;
+	    }
+
+	    aside,
+	    #overview,
+	    #ideas,
+	    #plan {
+	      display: none !important;
+	    }
+
+	    main {
+	      max-width: 1180px;
+	      margin: 0 auto;
+	      padding: 28px 24px 56px;
+	    }
+
+	    .topline {
+	      align-items: flex-start;
+	      margin-bottom: 16px;
+	    }
+
+	    .topline h2 {
+	      max-width: 760px;
+	      font-size: clamp(34px, 5vw, 56px);
+	      letter-spacing: 0;
+	    }
+
+	    .topline p {
+	      max-width: 660px;
+	      margin-top: 8px;
+	      font-size: 18px;
+	    }
+
+	    .toolbar {
+	      grid-template-columns: minmax(260px, 420px);
+	      margin: 18px 0 20px;
+	    }
+
+	    .toolbar input,
+	    .toolbar select {
+	      min-height: 46px;
+	      font-size: 15px;
+	    }
+
+	    .shootlist {
+	      box-shadow: none;
+	      margin-bottom: 18px;
+	    }
+
+	    .shootlist.is-empty {
+	      display: none;
+	    }
+
+	    .shootlist-head {
+	      padding: 12px 14px;
+	    }
+
+	    .shootlist-body {
+	      grid-template-columns: repeat(3, minmax(220px, 1fr));
+	      padding: 12px;
+	    }
+
+	    .funnel {
+	      grid-template-columns: repeat(2, minmax(0, 1fr));
+	      gap: 18px;
+	    }
+
+	    .backlog {
+	      grid-column: 1 / -1;
+	      margin-top: 6px;
+	      border-top: 1px solid var(--line);
+	      padding-top: 12px;
+	    }
+
+	    .backlog summary {
+	      cursor: pointer;
+	      color: var(--muted);
+	      font-weight: 800;
+	      list-style-position: inside;
+	    }
+
+	    .backlog summary span {
+	      float: right;
+	      font-size: 13px;
+	    }
+
+	    .backlog-grid {
+	      display: grid;
+	      grid-template-columns: repeat(2, minmax(0, 1fr));
+	      gap: 10px 18px;
+	      margin-top: 12px;
+	    }
+
+	    .lane {
+	      min-height: 0;
+	      border: 0;
+	      background: transparent;
+	      padding: 0;
+	    }
+
+	    .lane h3 {
+	      padding: 0 0 8px;
+	      border-bottom: 1px solid var(--line);
+	    }
+
+	    .idea-card {
+	      border-left-width: 1px;
+	      box-shadow: none;
+	      margin-bottom: 8px;
+	      padding: 12px;
+	    }
+
+	    .idea-card:hover {
+	      transform: none;
+	      box-shadow: none;
+	      border-color: #bdb7aa;
+	    }
+
+	    .idea-card h4 {
+	      margin: 8px 0 6px;
+	      font-size: 17px;
+	    }
+
+	    .concept {
+	      margin: 0;
+	      color: var(--muted);
+	      font-size: 14px;
+	      line-height: 1.4;
+	    }
+
+	    .tags {
+	      margin-top: 9px;
+	    }
+
+	    .open-brief {
+	      display: inline-block;
+	      margin-top: 10px;
+	      color: var(--muted);
+	      font-size: 13px;
+	      font-weight: 800;
+	    }
+
+	    .modal-status {
+	      margin: 10px 0 0;
+	      color: var(--muted);
+	      font-size: 15px;
+	    }
+
+	    .quick-select {
+	      min-height: 34px;
+	      padding: 6px 10px;
+	    }
+
+	    @media (max-width: 900px) {
+	      .funnel,
+	      .backlog-grid,
+	      .shootlist-body {
+	        grid-template-columns: 1fr;
+	      }
+	      .toolbar {
+	        grid-template-columns: 1fr 1fr;
+	      }
+	    }
+
+	    @media (max-width: 560px) {
+	      main {
+	        padding: 20px 14px 44px;
+	      }
+	      .topline p {
+	        font-size: 16px;
+	      }
+	      .toolbar {
+	        grid-template-columns: 1fr;
+	      }
+	      .shootlist-head,
+	      .modal-actions {
+	        align-items: stretch;
+	        flex-direction: column;
+	      }
+	    }
+	  </style>
+</head>
+<body>
+	  <div class="app">
+	    <main>
+	      <section id="funnel" class="section active">
+	        <div class="topline">
+		          <div>
+		            <h2>Velg hva vi filmer</h2>
+		            <p>Ekte bygging, ekte kunder, ekte founder-proof.</p>
+		          </div>
+		        </div>
+		        <div class="toolbar" id="toolbar"></div>
+	        <div class="shootlist">
+	          <div class="shootlist-head">
+	            <h3>Shootliste <span class="tag selected-tag" id="selectedCount">0 valgt</span></h3>
+	            <div class="shootlist-actions">
+	              <button class="ghost-btn" id="copySelected">Kopier valgte</button>
+	            </div>
+	          </div>
+	          <div class="shootlist-body" id="selectedIdeas"></div>
+	        </div>
+        <div class="funnel" id="funnelLanes"></div>
+      </section>
+
+	    </main>
+  </div>
+
+  <dialog id="ideaDialog">
+    <div class="modal-head">
+	      <span class="tag" id="modalId"></span>
+	      <h3 id="modalTitle"></h3>
+	      <div class="tags" id="modalTags"></div>
+	      <p class="modal-status" id="modalStatus"></p>
+	    </div>
+	    <div class="modal-body">
+	      <div class="modal-copy" id="modalConcept"></div>
+	      <div id="modalExpanded"></div>
+	    </div>
+    <div class="modal-actions">
+      <div class="modal-action-group">
+        <button class="select-btn" id="toggleSelected">Velg til opptak</button>
+        <button class="copy-btn" id="copyBrief">Kopier brief</button>
+      </div>
+      <button class="close" id="closeDialog">Lukk</button>
+    </div>
+  </dialog>
+
+  <script>
+    const ideas = [
+      {"id":"X-8","title":"Website In, Content Out - Live In Town","source":"Live demo","type":"Serie","family":"B - Kunde","pillar":"Native","track":"Kunde/Brand","platform":"TikTok + X","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå"},
+      {"id":"X-9","title":"Norgeskamp Business Challenge","source":"Live demo","type":"One-off/Serie","family":"B - Kunde","pillar":"Native","track":"Kunde/Brand","platform":"TikTok + X","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå"},
+      {"id":"X-1","title":"Native vs Marc Lou's Rules","source":"X-repost","type":"One-off","family":"X - Repost","pillar":"Native","track":"Brand/Investor","platform":"X + TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå"},
+      {"id":"X-7","title":"Native vs Danny / HeadshotPro","source":"X-repost","type":"One-off","family":"X - Repost","pillar":"Native","track":"Brand/Investor","platform":"X + TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå"},
+      {"id":"X-3","title":"Native vs Levels / Photo AI","source":"X-repost","type":"One-off","family":"X - Repost","pillar":"Native","track":"Brand/Investor","platform":"X + TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå"},
+      {"id":"R1-1","title":"Agency without the bullshit","source":"Rapport 1","type":"One-off","family":"Post","pillar":"Native","track":"Kunde","platform":"LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk"},
+      {"id":"R1-2","title":"2000 customers in 11 weeks, here's what broke","source":"Rapport 1","type":"One-off","family":"Post","pillar":"Native","track":"Investor","platform":"LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk"},
+      {"id":"R1-3","title":"The problem was never AI","source":"Rapport 1","type":"One-off","family":"Post","pillar":"AI + Native","track":"Kunde/Investor","platform":"LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk"},
+      {"id":"R1-4","title":"SMB-demo (tekst)","source":"Rapport 1","type":"One-off","family":"Post/Video","pillar":"Native","track":"Kunde/Brand","platform":"TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå"},
+      {"id":"R1-5","title":"I read one book, changed one thing","source":"Rapport 1","type":"Serie","family":"Post/Video","pillar":"Bøker","track":"Brand/Investor","platform":"TikTok","canFilm":"Delvis","requiresSf":"Nei","priority":"Vurder"},
+      {"id":"R1-6","title":"America is insane (in a good way)","source":"Rapport 1","type":"One-off","family":"Post","pillar":"Norge","track":"Brand","platform":"X","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk"},
+      {"id":"R1-7","title":"Reading is not the flex","source":"Rapport 1","type":"One-off","family":"Post","pillar":"Bøker","track":"Brand/Investor","platform":"X","canFilm":"Delvis","requiresSf":"Nei","priority":"Vurder"},
+      {"id":"R2-1","title":"Building Native From SF: One Proof Per Day","source":"Rapport 2","type":"Serie","family":"A - SF","pillar":"Native","track":"Brand/Investor","platform":"TikTok","canFilm":"Nei","requiresSf":"Ja","priority":"Vurder"},
+      {"id":"R2-5","title":"The Investor Whiteboard Test","source":"Rapport 2","type":"One-off","family":"A - SF","pillar":"Native","track":"Investor","platform":"LinkedIn + TikTok","canFilm":"Nei","requiresSf":"Ja","priority":"Vurder"},
+      {"id":"R2-6","title":"Norway Pitch vs SF Pitch","source":"Rapport 2","type":"One-off","family":"A - SF","pillar":"Norge + Native","track":"Brand/Investor","platform":"TikTok + X","canFilm":"Delvis","requiresSf":"Delvis","priority":"Sterk"},
+      {"id":"R2-7","title":"The 24-Hour Product Decision","source":"Rapport 2","type":"One-off","family":"A - SF","pillar":"Native","track":"Investor","platform":"LinkedIn + TikTok","canFilm":"Delvis","requiresSf":"Nei","priority":"Vurder"},
+      {"id":"R2-9","title":"I Made You Something Free","source":"Rapport 2","type":"Serie","family":"B - Kunde","pillar":"Native","track":"Kunde/Brand","platform":"TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå"},
+      {"id":"R2-10","title":"Owner Presses The Button","source":"Rapport 2","type":"One-off/Serie","family":"B - Kunde","pillar":"Native","track":"Kunde","platform":"TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå"},
+      {"id":"R2-11","title":"The Tone Test","source":"Rapport 2","type":"One-off","family":"B - Kunde","pillar":"Native","track":"Kunde","platform":"TikTok + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå"},
+      {"id":"R2-12","title":"Before/After Feed Wall","source":"Rapport 2","type":"Serie","family":"B - Kunde","pillar":"Native","track":"Kunde","platform":"TikTok + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk"},
+      {"id":"R2-13","title":"Founder Proof Friday","source":"Rapport 2","type":"Serie","family":"C - Bevis","pillar":"Native","track":"Investor","platform":"LinkedIn + X","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk"},
+      {"id":"R2-14","title":"The $45k AI Bill On Screen","source":"Rapport 2","type":"One-off","family":"C - Bevis","pillar":"Native + AI","track":"Investor/Kunde","platform":"TikTok + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå"},
+      {"id":"R2-15","title":"Kill The Feature Live","source":"Rapport 2","type":"One-off","family":"C - Bevis","pillar":"Native","track":"Investor","platform":"LinkedIn + TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk"},
+	      {"id":"R2-16","title":"Customer Call, No Camera On Customer","source":"Rapport 2","type":"One-off/Serie","family":"C - Bevis","pillar":"Native","track":"Investor/Kunde","platform":"LinkedIn + TikTok","canFilm":"Delvis","requiresSf":"Nei","priority":"Vurder"},
+	      {"id":"X-2","title":"7 Products, One Afternoon Of Content","source":"X-repost","type":"One-off","family":"X - Repost","pillar":"Native","track":"Brand/Investor","platform":"X","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå"},
+	      {"id":"X-4","title":"Can Native Do A Health Brand Without Making It Cringe?","source":"X-repost","type":"One-off","family":"X - Repost","pillar":"Native","track":"Brand/Investor","platform":"X + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk"},
+	      {"id":"X-6","title":"Native vs Founder Rules","source":"X-repost","type":"Serie","family":"X - Repost","pillar":"Native","track":"Brand/Investor","platform":"X + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk"}
+	    ];
+
+    const briefs = {
+      "R1-1": {
+        concept: "LinkedIn-post som forklarer Native som et byra uten meetings, briefing-runder og dyr invoice.",
+        make: [
+          "Åpne med: Native is an agency. Just without the bullshit.",
+          "Kontraster gammel byra-prosess mot Native-flow: URL inn, content ut.",
+          "Bruk ett enkelt bilde/carousel: Old agency flow vs Native flow.",
+          "Avslutt med $79/month og website-as-briefing."
+        ],
+        hooks: [
+          "Native is an agency. Just without the bullshit.",
+          "The agency model is not wrong. The process is.",
+          "$79/month should not beat an agency. But sometimes it does."
+        ],
+        real: [
+          "Pris og produktlofte må stemme.",
+          "Ikke bruk byrasprak eller generisk SaaS-copy.",
+          "Hvis du viser output, bruk ekte eller anonymisert Native-output."
+        ],
+        next: "Lag en enkel carousel med to kolonner: Agency way vs Native way."
+      },
+      "R1-2": {
+        concept: "Founder credibility-post: 2000 kunder på 11 uker høres clean ut, men posten handler om hva som faktisk brakk.",
+        make: [
+          "Åpne med tallet: 2000 customers in 11 weeks.",
+          "List 4-5 ekte ting som ble vanskelig: kvalitet, edge cases, AI cost, team, feature pressure.",
+          "Knytt alt tilbake til kjerneproduktet: Website in. Content out.",
+          "Ikke flex veksten. Bruk veksten som bevis på operasjonell læring."
+        ],
+        hooks: [
+          "We got 2000 customers in 11 weeks. Here is what broke.",
+          "Growth creates problems. Good.",
+          "The hardest part was not getting customers."
+        ],
+        real: [
+          "2000-kunde-tallet må fortsatt stemme eller oppdateres.",
+          "Punktene som brakk må komme fra ekte Native-operasjon.",
+          "Ikke finn på churn, margin eller AI-tall hvis de ikke deles."
+        ],
+        next: "Oskar/teamet skriver en ekte liste med 5 ting som brakk. Posten bygges rundt den listen."
+      },
+      "R1-3": {
+        concept: "AI-slop-forsvaret: problemet var aldri AI, problemet var dårlig briefing.",
+        make: [
+          "Vis en dårlig prompt som gir generisk content.",
+          "Vis Native som leser en faktisk website.",
+          "Sammenlign generisk output mot website-basert output.",
+          "Avslutt med: Your website is the brief."
+        ],
+        hooks: [
+          "The problem was never AI content.",
+          "AI slop is usually briefing slop.",
+          "Bad input. Bad output. Not very mystical."
+        ],
+        real: [
+          "Bruk ekte outputs fra Native.",
+          "Ikke overdriv forskjellen hvis output ikke er bra nok.",
+          "Ikke si at AI alltid blir bra. Si at briefing er forskjellen."
+        ],
+        next: "Finn en SMB-nettside med tydelig tone og lag en før/etter-sammenligning."
+      },
+      "R1-4": {
+        concept: "Kort demo som viser SMB-nettside inn i Native og ferdige poster ut.",
+        make: [
+          "Film Oskar foran laptop.",
+          "Vis website, lim inn URL, generer poster.",
+          "Zoom inn på 2-3 poster som faktisk er brukbare.",
+          "Avslutt med pris/lofte: No brief. No meeting. Just your URL."
+        ],
+        hooks: [
+          "Give me one website and 5 minutes.",
+          "$79 should beat a $2,000 agency. Let me show you.",
+          "No brief. No meeting. Just your URL."
+        ],
+        real: [
+          "Website og output må være ekte.",
+          "Hvis business er gjenkjennelig, fa samtykke.",
+          "Ikke vis kundeinfo, API keys eller sensitiv data."
+        ],
+        next: "Velg en ekte norsk SMB og film en ren skjermdemo for TikTok."
+      },
+      "R1-5": {
+        concept: "Serie der en bok kun blir content hvis den endrer en konkret ting i Native.",
+        make: [
+          "Vis boken fysisk.",
+          "Vis en highlight eller ett notat.",
+          "Vis hva som faktisk ble endret i produkt, salg eller team.",
+          "Avslutt med regelen: Reading without shipping is entertainment."
+        ],
+        hooks: [
+          "I don't read to feel smart.",
+          "This book changed one thing in Native this week.",
+          "Reading without shipping is entertainment."
+        ],
+        real: [
+          "Boken må faktisk være lest.",
+          "Endringen må faktisk ha skjedd eller være planlagt.",
+          "Ikke lag quote-content uten handling."
+        ],
+        next: "Velg første bok + en konkret Native-endring for episode 1."
+      },
+      "R1-6": {
+        concept: "X-post eller kort video om amerikansk ambisjon, med beundring først og 'yapping'-kant etterpå.",
+        make: [
+          "Start med en personlig observasjon fra USA/SF.",
+          "Si hva Norge kan stjele: ambisjon, direktehet, speed.",
+          "Legg inn kanten: holy shit, the yapping.",
+          "Koble tilbake til hvorfor Oskar bygger globalt."
+        ],
+        hooks: [
+          "America is insane in a good way.",
+          "Norway has safety. America has permission.",
+          "I love American ambition. But holy shit."
+        ],
+        real: [
+          "Må bygge på faktisk opplevelse, ikke turist-inntrykk.",
+          "Ikke bli bitter europeer.",
+          "Ikke post hvis det bare handler om byen."
+        ],
+        next: "Bruk etter et ekte møte eller founder-samtale, ikke som generisk take."
+      },
+      "R1-7": {
+        concept: "Kort X-post som setter standarden for bok-pilaren: lesing er bare verdt noe hvis det endrer adferd.",
+        make: [
+          "Skriv kort og hardt.",
+          "Bruk formatet: 1 book, 1 stolen idea, 1 thing changed in Native.",
+          "Ikke legg ved bokliste.",
+          "Bruk som intro til bok-serien."
+        ],
+        hooks: [
+          "Reading is not the flex.",
+          "Books are only useful if they change behavior.",
+          "I don't read to collect quotes."
+        ],
+        real: [
+          "Hvis den kobles til en bok, må boken og endringen være ekte.",
+          "Ikke bli selvhjelp-polert.",
+          "En tese: reading -> behavior."
+        ],
+        next: "Post som kort X-tese eller bruk som intro på første bokvideo."
+      },
+      "R2-1": {
+        concept: "Daglig SF-logg: en dag, ett bevis, en læring. Ikke sightseeing.",
+        make: [
+          "Start med: Day X building Native from San Francisco.",
+          "Vis ett proof: demo, avslag, kunde, bug, tall eller beslutning.",
+          "Si hva Norge/SF-kontrasten laerte Oskar.",
+          "Avslutt med neste konkrete handling."
+        ],
+        hooks: [
+          "Day 3 building Native from San Francisco. Today we got rejected.",
+          "Norwegian founder in SF. One proof every day.",
+          "No sightseeing today. Just one customer demo."
+        ],
+        real: [
+          "Dagnummer og proof må være ekte.",
+          "Ikke bruk utsikt/kaffe som hovedpost.",
+          "Hvis person/møte vises, fa samtykke."
+        ],
+        next: "Bruk bare hvis teamet faktisk kan holde daglig eller nesten daglig kadens."
+      },
+      "R2-2": {
+        concept: "Serie som dokumenterer ekte avslag i SF og hva de endrer i pitch eller produkt.",
+        make: [
+          "Start med No #X.",
+          "Forklar kort hva personen sa nei til.",
+          "Vis notat eller pitch-linje som endres.",
+          "Avslutt med hva som testes i neste demo."
+        ],
+        hooks: [
+          "No #4 in San Francisco. This one was useful.",
+          "He said Native is too Norway-coded. Fair.",
+          "I got rejected. So we changed the pitch."
+        ],
+        real: [
+          "Avslaget må ha skjedd.",
+          "Kritikken må gjengis fair og anonymiseres ved behov.",
+          "Endringen må faktisk brukes videre."
+        ],
+        next: "Start fra første ekte SF-avslag. Ikke vent på perfekt story."
+      },
+      "R2-3": {
+        concept: "Serie: de første 10 SF-demoene og hva amerikanske kunder faktisk reagerer på.",
+        make: [
+          "Merk hver episode: SF Demo #1/10, #2/10 osv.",
+          "Vis 3-5 sekunder produktdemo.",
+          "Vis eller fortell kundens viktigste reaksjon/objection.",
+          "Avslutt med en pitch- eller produktlaering."
+        ],
+        hooks: [
+          "Demo #2 in SF. This owner did not care about AI.",
+          "I showed Native to a US business. They only cared about one thing.",
+          "First 10 SF demos. Here is what Americans react to."
+        ],
+        real: [
+          "Demoene må være ekte.",
+          "Kundereaksjon må være ufiltrert.",
+          "Samtykke hvis ansikt, stemme eller website vises."
+        ],
+        next: "Lag demo-tracker og film kort etter hver demo mens hukommelsen er fersk."
+      },
+      "R2-4": {
+        concept: "Fyrste amerikanske kunde trykker på Native-knappen selv og ser eget content bli laget.",
+        make: [
+          "Close-up på finger over generate-knappen.",
+          "Oskar sier: No tutorial. Just your website.",
+          "Kunden limer inn URL og trykker selv.",
+          "Film reaksjonen nar postene dukker opp."
+        ],
+        hooks: [
+          "My first American customer pressed the button.",
+          "I let a US business owner use Native without explaining it.",
+          "If she needs a tutorial, we failed."
+        ],
+        real: [
+          "Kun bruk 'first' hvis det er sant.",
+          "Kunden må faktisk trykke selv.",
+          "Reaksjonen må ikke scripts."
+        ],
+        next: "Vent til første reelle US-kunde/pilot og fa tydelig filming consent."
+      },
+      "R2-5": {
+        concept: "Investor/advisor gir Oskar 60 sekunder på whiteboard til å forklare Native.",
+        make: [
+          "Sett timer på 60 sekunder.",
+          "Tegn: Website -> Native -> 30 posts.",
+          "La investor/advisor stille ett hardt spørsmål.",
+          "Vis pitch-linjen som blir slettet eller gjort enklere etterpå."
+        ],
+        hooks: [
+          "An SF investor gave me 60 seconds to explain Native.",
+          "If I need 10 minutes, the pitch is broken.",
+          "This whiteboard changed our pitch."
+        ],
+        real: [
+          "Personen må faktisk være investor/advisor/founder-relevant.",
+          "Spørsmålet må være ekte.",
+          "Ikke fake urgency eller dramatiser for mye."
+        ],
+        next: "Bruk hvis et ekte møte gir permission til å filme deler av rommet/whiteboardet."
+      },
+      "R2-6": {
+        concept: "To pitch-lapper: norsk høflig pitch vs SF-direkte pitch. Oskar tester den nye i ekte demo.",
+        make: [
+          "Vis to lapper: Norway pitch og SF pitch.",
+          "Les den lange, høflige versjonen og riv/stryk den.",
+          "Les den korte: Your website becomes 30 posts. No meeting. $79.",
+          "Vis 3-5 sekunder fra en faktisk demo der den testes."
+        ],
+        hooks: [
+          "My Norwegian pitch was too polite.",
+          "SF made me delete half the sentence.",
+          "In Norway I explained. Here I have to prove."
+        ],
+        real: [
+          "SF-pitchen må faktisk testes.",
+          "Reaksjonen må være ekte.",
+          "Ikke lat som den funket hvis den ikke gjorde det."
+        ],
+        next: "Film Norway-pitch for avreise, og SF-pitch etter første demo."
+      },
+      "R2-7": {
+        concept: "En ekte produktavgjørelse tas på kamera etter kunde- eller teamfeedback.",
+        make: [
+          "Vis feature request eller problem på whiteboard.",
+          "Spørsmål: Does it support Website in -> Content out?",
+          "Vis kort pro/con fra team eller notater.",
+          "Ta beslutningen: ship, park eller kill."
+        ],
+        hooks: [
+          "A customer asked for this. We almost said yes.",
+          "This feature sounded smart. So we killed it.",
+          "Fast growth makes every feature dangerous."
+        ],
+        real: [
+          "Requesten må være ekte.",
+          "Beslutningen må faktisk gjelde produktet.",
+          "Ingen kunde eller teammedlem skal henges ut."
+        ],
+        next: "Bruk neste gang en feature request skaper en reell diskusjon."
+      },
+      "R2-8": {
+        concept: "Ukentlig SF-scoreboard med tall, no's, shipped, killed og en læring.",
+        make: [
+          "Åpne med Week X building Native from SF.",
+          "Vis tall: demos, yes, no, shipped, killed.",
+          "Ta med ett negativt datapunkt.",
+          "Avslutt med neste ukes konkrete mål."
+        ],
+        hooks: [
+          "Week 2 building Native from SF. The numbers:",
+          "Good week? Maybe. Here is the real scoreboard.",
+          "SF week log: 7 demos, 3 no's, 1 thing shipped."
+        ],
+        real: [
+          "Alle tall må være ekte.",
+          "Negative tall må ikke pyntes bort.",
+          "Neste mål må være konkret."
+        ],
+        next: "Start fredag i uke 1 i SF. Lag fast Notion/whiteboard-mål."
+      },
+      "R2-9": {
+        concept: "Oskar går fysisk inn til en SMB og sier: I made you something free. Viser 5 poster laget fra websiten.",
+        make: [
+          "Film utenfor butikken/businessen.",
+          "Vis URL inn i Native og 5 ferdige poster.",
+          "Oskar går inn og ber om 60 sekunder.",
+          "Eier velger beste og verste post."
+        ],
+        hooks: [
+          "I made your business 5 posts. Free.",
+          "I walked into a random business with their content already done.",
+          "No pitch. I just made them something."
+        ],
+        real: [
+          "Business og website må være ekte.",
+          "Reaksjonen må ikke scripts.",
+          "Samtykke for filming inne."
+        ],
+        next: "Velg 3 SMB-er i Norge og prepp 5 poster for hver første opptaksdag."
+      },
+      "R2-10": {
+        concept: "Eieren bruker Native uten tutorial. Hvis de trenger hjelp, har produktet friksjon.",
+        make: [
+          "Sett eieren foran laptop.",
+          "Oskar sier: I am not allowed to explain.",
+          "Eieren limer inn URL og trykker generate.",
+          "Spørsmål til slutt: Would you post any of these?"
+        ],
+        hooks: [
+          "If he needs my help, the product failed.",
+          "I gave a business owner Native with zero tutorial.",
+          "Can a busy owner make 30 posts in 5 minutes?"
+        ],
+        real: [
+          "Ingen forhåndstrening.",
+          "Eieren må faktisk bruke produktet selv.",
+          "Postene må være ekte output."
+        ],
+        next: "Film i kontrollert setting med en friendly SMB først."
+      },
+      "R2-11": {
+        concept: "Blind tone test: eier velger hvilken Native-post som høres mest ut som businessen.",
+        make: [
+          "Oskar leser tre korte postforslag.",
+          "Eieren vet ikke hvilke som kom fra Native eller hvorfor.",
+          "Eieren velger den som høres mest riktig ut.",
+          "Reveal: websiten hadde voice/context hele tiden."
+        ],
+        hooks: [
+          "Can AI sound like a real local business?",
+          "She did not know these posts came from Native.",
+          "The tone test: owner vs AI."
+        ],
+        real: [
+          "Blindtesten må faktisk være blind.",
+          "Postene må komme fra kundens website.",
+          "Eierens valg og reaksjon må være ekte."
+        ],
+        next: "Finn business med tydelig tone. Lag 3 korte posts for test."
+      },
+      "R2-12": {
+        concept: "Gjør content-problemet fysisk: before-feed på venstre, 30 Native-posts på høyre.",
+        make: [
+          "Print eller vis dagens feed: f.eks. 3 poster på 90 dager.",
+          "Kjør website gjennom Native.",
+          "Legg 30 post-kort på bord/vegg.",
+          "Eieren velger 3 de faktisk ville postet."
+        ],
+        hooks: [
+          "This wall is why small businesses stop posting.",
+          "Before: 3 posts in 90 days. After: 30 ready.",
+          "I made their content problem physical."
+        ],
+        real: [
+          "For-feed-data må stemme.",
+          "Postkortene må være ekte output.",
+          "Eierens valg må ikke styres."
+        ],
+        next: "Lag enkel print-mål og kjør med en business som har lite posting."
+      },
+      "R2-13": {
+        concept: "Ukentlig founder-proof: ett ekte tall, ett problem, en beslutning.",
+        make: [
+          "Åpne med Founder Proof Friday.",
+          "Vis ett ekte dashboard/tall/problem.",
+          "Si good part og bad part.",
+          "Avslutt med beslutningen teamet tar."
+        ],
+        hooks: [
+          "Founder Proof Friday: our AI bill is ugly.",
+          "One real number from Native this week.",
+          "This is what I would show an investor."
+        ],
+        real: [
+          "Tallet må være ekte og lov å vise.",
+          "Sensitive data må anonymiseres.",
+          "Beslutningen må faktisk følges opp."
+        ],
+        next: "Velg første proof: AI bill, support queue, customer count eller posts generated."
+      },
+      "R2-14": {
+        concept: "Vis $45k AI-regningen og forklar hvorfor kunden skal slippe å tenke på den kompleksiteten.",
+        make: [
+          "Close-up av anonymisert AI-cost dashboard/invoice.",
+          "Zoom ut til Oskar: This is what we spend so customers don't have to.",
+          "Vis kompleks skjerm: model usage, failed outputs, quality checks.",
+          "Vis enkel Native UI: URL inn, posts ut."
+        ],
+        hooks: [
+          "This is our $45k/month AI bill.",
+          "$45k on our side. $79 on the customer's side.",
+          "Small businesses should not need to understand this screen."
+        ],
+        real: [
+          "$45k-tallet må stemme eller oppdateres.",
+          "Skjerm må være ekte/anonymisert.",
+          "Ikke vis API keys eller vendor-sensitive data."
+        ],
+        next: "Lag anonymisert skjermopptak av AI-cost + ett Native-output eksempel."
+      },
+      "R2-15": {
+        concept: "Oskar dreper en feature live fordi den ville gjort Native mindre enkelt.",
+        make: [
+          "Vis sticky note med ekte feature request.",
+          "Test den mot: Does it help Website in -> Content out?",
+          "Flytt sticky fra Maybe til Kill pile.",
+          "Vis kort Slack/Loom til teamet med begrunnelse."
+        ],
+        hooks: [
+          "A customer asked for this feature. We killed it.",
+          "Saying yes would make Native worse.",
+          "This is the least sexy part of building."
+        ],
+        real: [
+          "Feature request må være ekte.",
+          "Beslutningen må faktisk gjelde roadmap.",
+          "Kunden skal anonymiseres."
+        ],
+        next: "Bruk neste ekte feature request som ikke passer kjerneproduktet."
+      },
+	      "R2-16": {
+	        concept: "Kundecall uten å vise kunden. Vi ser hva kunden sa og hva Native endrer etterpå.",
+	        make: [
+          "Film Oskar med headset, ikke kundens skjerm.",
+          "Mute eller tekst en anonymisert paraphrase.",
+          "Vis notatet: hvor kunden blir sliten/friction.",
+          "Vis produkt/team-endringen etter callen."
+        ],
+        hooks: [
+          "This customer call changed one part of Native.",
+          "I can't show the customer. I can show what we changed.",
+          "The best product feedback was hidden in one sentence."
+        ],
+        real: [
+          "Callen må være ekte.",
+          "Kunden må ikke identifiseres uten samtykke.",
+          "Endringen må være faktisk vurdert eller shipped."
+	        ],
+	        next: "Bruk etter neste call der en kunde sier noe som endrer produktprioritet."
+	      },
+	      "X-8": {
+	        concept: "Oskar tar med PC-en ut i byen, finner en ekte bedriftseier og lager ferdige Native-poster mens personen ser på.",
+	        context: [
+	          "Dette er det enkleste live-beviset: én ekte business, én nettside, én reaksjon.",
+	          "Personen trenger ikke være kjent. Reaksjonen og skjermen er historien.",
+	          "Premisset er ikke at Oskar er snill. Premisset er: virker Native foran en fremmed?"
+	        ],
+	        say: [
+	          "Driver du en business? Gi meg nettsiden din i fem minutter.",
+	          "Jeg gjør ingenting manuelt nå. Jeg limer bare inn siden din i Native.",
+	          "Se på skjermen. Dette er laget fra nettsiden din akkurat nå.",
+	          "Ville du postet dette? Hva ville du endret?",
+	          "Du eier outputen. Ingen binding, ingen pitch."
+	        ],
+	        make: [
+	          "Film 30-60 sek: stopp person -> få nettside -> lim inn -> Native genererer -> reaksjon.",
+	          "Bruk to vinkler: ansikt/reaksjon og skjermopptak.",
+	          "Ha timer eller klokke synlig for å bevise at det skjer live.",
+	          "Slutt på beste Native-post i fullskjerm, ikke på Oskar."
+	        ],
+	        hooks: [
+	          "Give me your website for 5 minutes. If this is bad, coffee is on me.",
+	          "I found a business owner in town and made their next 10 posts live.",
+	          "No brief. No pitch. Just their website into Native.",
+	          "Would you post this? Be honest."
+	        ],
+	        real: [
+	          "Ekte bedrift, ekte nettside, ekte Native-output.",
+	          "Ikke forhåndslag resultatet. Ikke instruer reaksjonen.",
+	          "Få tydelig samtykke på kamera før publisering.",
+	          "Bruk kaffe/alkoholfritt som standard. Øl bare hvis personen er voksen, edru, og det ikke er hovedpremisset.",
+	          "Spør én gang. Nei betyr ferdig."
+	        ],
+	        cut: [
+	          "Ikke gjør dette til veldedighets-TV.",
+	          "Ikke la øl/kaffe bli hovedhooken.",
+	          "Ikke film folk som virker påvirket.",
+	          "Ikke film mindreårige eller folk i bakgrunn hvis det kan unngås."
+	        ],
+	        next: "Film 3 korte forsøk samme dag. Publiser den med ekte reaksjon og tydeligst skjermbevis."
+	      },
+	      "X-9": {
+	        concept: "Samme live-demo som X-8, men rundt Norgeskamp: finn fans som driver business og lag innhold før kampstart.",
+	        context: [
+	          "Dette er en høyere-støy variant av live-demoen, ikke et nytt format.",
+	          "Kampen gir energi og folk, men Native må fortsatt være hovedpersonen.",
+	          "Best utenfor arenaen: fanzone, gate eller pub før kampen."
+	        ],
+	        say: [
+	          "Du er på vei til kamp, men driver du også en business?",
+	          "Gi meg nettsiden din før avspark. Jeg lager poster mens vi står her.",
+	          "Hvis dette høres ut som generisk AI-copy, sier du det rett ut.",
+	          "Ville du brukt dette etter kampen?"
+	        ],
+	        make: [
+	          "Film utenfor arena eller på egnet sted med lov å filme.",
+	          "Samme struktur: business -> nettside -> Native-output -> reaksjon.",
+	          "Hold videoen kortere enn byversjonen: 20-40 sek.",
+	          "Bruk kampstemningen som B-roll, ikke som selve posten."
+	        ],
+	        hooks: [
+	          "I made content for business owners before kickoff.",
+	          "Found a founder at the Norway game. Gave him posts before the match started.",
+	          "If Native fails, I owe him a beer after the match.",
+	          "Website in before kickoff. Content out before kickoff."
+	        ],
+	        real: [
+	          "Kun edru voksne deltakere. Ingen barn.",
+	          "Ikke film inne på arena uten tillatelse.",
+	          "Ikke bruk øl som lokkemiddel. Kaffe/alkoholfritt er default; øl bare ansvarlig etterpå.",
+	          "Få samtykke på kamera og helst enkel skriftlig godkjenning.",
+	          "Lyden må være forståelig. Hvis ikke, dropp publisering."
+	        ],
+	        cut: [
+	          "Ikke la fotballen overta videoen.",
+	          "Ikke gjør dette til prank/intervju-content.",
+	          "Ikke publiser hvis businessen ikke er ekte eller outputen er svak.",
+	          "Ikke jag folk som er på vei inn til kamp."
+	        ],
+	        next: "Test X-8 først. Bruk Norgeskamp-versjonen når live-demoen sitter teknisk."
+	      },
+	      "X-1": {
+	        concept: "Episode 1 i Native vs Founder Rules: kjør shipfa.st gjennom Native og score om outputen matcher Marc Lous enkle X-regler.",
+	        context: [
+	          "Marc Lou = indie-utvikler bak ShipFast og flere små SaaS-produkter.",
+	          "ShipFast = ferdig kodebase for å lansere SaaS, AI-tools og webapper raskt.",
+	          "Hvorfor vi bruker ham: han har offentlige regler for enkel X-copy som er lett å score mot."
+	        ],
+	        say: [
+	          "Marc Lou har enkle offentlige regler for hva som er en god post.",
+	          "Jeg kjører ShipFast gjennom Native og scorer mot reglene hans.",
+	          "Tre sjekker: poeng først, lett å forstå, founder voice fremfor generisk SaaS-copy.",
+	          "Hvis Native treffer: dette er beviset. Hvis det bommer: dette er hva vi forbedrer."
+	        ],
+	        make: [
+	          "Kjør privat test av shipfa.st i Native før filmedag.",
+	          "Film 20-35 sek: website -> Native output -> 3 checks -> score.",
+	          "Vis ett konkret treff og én konkret bom.",
+	          "Bruk én reply-tag etter publisering, ikke i main post."
+	        ],
+	        hooks: [
+	          "I tested Native against Marc Lou's own writing rules.",
+	          "Can our AI avoid generic SaaS slop on ShipFast?",
+	          "Website in. Native output out. Three checks.",
+	          "If the output is weak: We tested Native against Marc Lou's rules. It failed on voice. Here's what we changed."
+	        ],
+	        real: [
+	          "Score privat først. Ikke publiser offentlig svak score som Marc-tag video.",
+	          "Bruk kun offentlig ShipFast, Marc-posts eller newsletter.",
+	          "All AI-copy må merkes Native-generated.",
+	          "Ikke tagg Marc i hovedposten. Maks én reply-tag: Tested this against @marc_louvion's own rules. What would you cut first?"
+	        ],
+	        next: "Kjør privat test denne uka. Hvis outputen er sterk: film bevis-video. Hvis svak: film produktforbedring."
+	      },
+	      "X-2": {
+	        concept: "Kjør Marc Lous produktportefølje gjennom Native og vis skala: flere produkter, samme founder-stemme.",
+	        make: [
+	          "Vis Indie Page-porteføljen med ShipFast, CodeFast, DataFast, TrustMRR, Ship or Die, Zenvoice og Indie Page.",
+	          "Kjør hver URL gjennom Native og logg faktisk tid brukt.",
+	          "Vis én sterk post per produkt på en enkel output-vegg."
+	        ],
+	        hooks: [
+	          "A solo founder with 7 products has 7 content problems. I solved them in one afternoon.",
+	          "7 products in. 35 posts out. Same voice across all of them.",
+	          "This is what a content team for an indie portfolio looks like without the team."
+	        ],
+	        real: [
+	          "Alle URLer og outputs må være ekte.",
+	          "Tid brukt og antall poster må stemme.",
+	          "Kutt svake outputs åpent i stedet for å late som alt er perfekt."
+	        ],
+	        next: "Hent URLene fra Indie Page, kjør dem i Native, og logg tid + antall posts ut."
+	      },
+	      "X-3": {
+	        concept: "Episode 3: kjør Photo AI gjennom Native og se om outputen føles direkte og internet-native, ikke polert LinkedIn-copy.",
+	        context: [
+	          "Pieter Levels = indie maker bak Photo AI, Nomad List og Remote OK.",
+	          "Photo AI = upload selfies, lag AI-modell, generer bilder/videoer av deg selv.",
+	          "Hvorfor vi bruker ham: direkte founder-stemme, lite corporate polish, mange følger ham på X."
+	        ],
+	        say: [
+	          "Levels bygger produkter som føles laget av én person, ikke en komité.",
+	          "Jeg kjører Photo AI gjennom Native og ser om outputen fortsatt føles direkte.",
+	          "Tre sjekker: poeng først, lett å forstå, ikke corporate.",
+	          "Hvis det høres ut som LinkedIn, har Native bommet."
+	        ],
+	        make: [
+	          "Kjør privat test av photoai.com i Native.",
+	          "Film samme format som Marc: website -> Native output -> 3 checks -> score.",
+	          "Bruk Photo AI alene, ikke hele Levels-porteføljen."
+	        ],
+	        hooks: [
+	          "Can Native write for a one-person company without making it sound corporate?",
+	          "Photo AI is weird, direct and visual. Can Native keep that?",
+	          "If the copy sounds like LinkedIn, it failed."
+	        ],
+	        real: [
+	          "Bruk kun offentlig Photo AI/Levels-innhold.",
+	          "Ikke påstå at Pieter bruker eller anbefaler Native.",
+	          "Ikke gjør no employees/no investors til hovedpoenget. Det er bakgrunn, ikke videoens tese.",
+	          "Samme tagging-regel som Marc: ingen main-post tag, maks én reply-tag."
+	        ],
+	        next: "Test photoai.com etter Marc og Danny. Bruk bare hvis outputen har tydelig forskjell fra generisk AI-copy."
+	      },
+	      "X-7": {
+	        concept: "Episode 2: kjør HeadshotPro gjennom Native og score om outputen blir konkret og visuelt bevisende, ikke AI-buzzword-copy.",
+	        context: [
+	          "Danny Postma = founder bak HeadshotPro og flere AI-produkter.",
+	          "HeadshotPro = AI-headshots uten fysisk photoshoot.",
+	          "Hvorfor vi bruker ham: produktet er visuelt og lett å forstå på ett sekund."
+	        ],
+	        say: [
+	          "Dette er en enkel test: klarer Native å skrive konkret om et visuelt AI-produkt?",
+	          "HeadshotPro selger et resultat folk skjønner med en gang: bedre headshot.",
+	          "Tre sjekker: konkret outcome, visuelt bevis, trust over AI-buzzwords.",
+	          "Hvis posten bare sier AI-powered professional headshots, har Native bommet."
+	        ],
+	        make: [
+	          "Kjør privat test av headshotpro.com i Native.",
+	          "Film 20-35 sek: website -> Native output -> 3 checks -> score.",
+	          "Vis ett eksempel der teksten blir konkret, og ett der den blir for generisk."
+	        ],
+	        hooks: [
+	          "Can Native write for an AI headshot company without sounding like every AI tool?",
+	          "The product is visual. The copy has to be concrete.",
+	          "AI headshots are easy to understand. Bad AI copy makes them harder."
+	        ],
+	        real: [
+	          "Bruk kun offentlig HeadshotPro-side og offentlig synlige eksempler.",
+	          "Ikke påstå at Danny bruker eller anbefaler Native.",
+	          "Ikke gjør dette til founder-biografi. Produktet er poenget.",
+	          "Ingen main-post tag. Maks én reply-tag hvis posten står alene."
+	        ],
+	        next: "Kjør HeadshotPro-testen etter Marc. Den bør være episode 2 fordi produktet er mest visuelt."
+	      },
+	      "X-4": {
+	        concept: "Test om Native kan skrive for Levels Health uten å finne på medisinske claims.",
+	        make: [
+	          "Kjør Levels.com gjennom Native og generer posts.",
+	          "Sjekk output mot én regel: ingen påstand som ikke finnes på websiten.",
+	          "Vis kontrasten mellom ShipFast-blunt og Levels-seriøs brand voice."
+	        ],
+	        hooks: [
+	          "Can AI write for a health brand without inventing medical claims?",
+	          "Same software that nails a meme-y SaaS voice, now on a careful health brand.",
+	          "The real test of brand voice isn't the easy brands. It's the careful ones."
+	        ],
+	        real: [
+	          "Ingen helsepåstand som ikke finnes på Levels' egen side.",
+	          "Tonen må faktisk skifte fra indie-SaaS til health-seriøs.",
+	          "Vis et eksempel Native måtte kutte eller flagge hvis det skjer."
+	        ],
+	        next: "Kjør levels.com gjennom Native og sammenlign output med ShipFast-testen."
+	      },
+	      "X-5": {
+	        concept: "I SF: kjør fem kjente indie-produkter gjennom Native før lunsj og vis output-veggen.",
+	        make: [
+	          "Film i SF mens 5 URLer kjøres gjennom Native på rad.",
+	          "Bruk ShipFast, Photo AI, Remote OK, Nomad List og Zenvoice eller tilsvarende.",
+	          "Vis output-veggen og si: this is a morning, not a campaign."
+	        ],
+	        hooks: [
+	          "5 of the most-watched indie products. All run through Native before lunch.",
+	          "In SF the whole indie internet is around the corner. So I made their content.",
+	          "No briefs. No meetings. 5 brands, one morning."
+	        ],
+	        real: [
+	          "Alle fem URLer og outputs må være ekte.",
+	          "Ikke si before lunch hvis det faktisk tok hele dagen.",
+	          "Produktene er motivet, ikke folk som blir bedt om repost."
+	        ],
+	        next: "Lås 5 targets før SF, og film en ekte formiddag med URL inn -> content ut."
+	      },
+	      "X-6": {
+	        concept: "Repeterbar serie: Oskar kjører én kjent founder-website gjennom Native og scorer om outputen matcher stilen eller blir generisk SaaS-copy.",
+	        context: [
+	          "Dette er serien som samler Marc, Danny, Levels og lignende founder-tester.",
+	          "Én episode = én founder, én website, ett scorecard.",
+	          "Målet er ikke å få repost. Målet er å vise Native med ekte, kjente testobjekter."
+	        ],
+	        make: [
+	          "Fast format: 20-35 sek. Website -> Native output -> 3 checks -> score.",
+	          "Scorecard: poeng først, lett å forstå, founder voice fremfor generisk SaaS-copy.",
+	          "Vis ett konkret treff og én konkret bom.",
+	          "Kjør privat test først. Velg bevis-video eller forbedringslogg etter faktisk output."
+	        ],
+	        hooks: [
+	          "Every week I test Native against a founder-led internet business.",
+	          "Website in. Native output out. Three checks.",
+	          "Most AI content demos cherry-pick. This one keeps score."
+	        ],
+	        real: [
+	          "Scoren må være ærlig, men ikke publiser svak score som tagging-stunt.",
+	          "Bruk kun ekte offentlige sider.",
+	          "Maks 1 founder-fact per video.",
+	          "Ingen lange bakgrunnsforklaringer i selve videoen."
+	        ],
+	        targets: [
+	          "Episode 1: Marc Lou / ShipFast - enkel struktur, mening først, cut fluff.",
+	          "Episode 2: Danny Postma / HeadshotPro - konkret outcome, visuelt bevis, trust over AI-buzzwords.",
+	          "Episode 3: Pieter Levels / Photo AI - direkte internet-native voice, null corporate polish.",
+	          "Backlog: Tibo / Revid eller SuperX - social/growth-produkter, nær Native.",
+	          "Backlog: Tony Dinh / TypingMind - clean indie software, åpen build-in-public.",
+	          "Backlog: Damon Chen / PDF.ai - tydelig AI-produkt, enkel website.",
+	          "Backlog: Jon Yongfook / Bannerbear - bilde/video-API, relevant for content automation.",
+	          "Vent med Arvid Kahl - mer teaching/persona enn tydelig Native-demo."
+	        ],
+	        cut: [
+	          "Ikke forklar hele founder-historien.",
+	          "Ikke kjør flere produkter per episode.",
+	          "Ikke tag i main post.",
+	          "Ikke planlegg alle 8 før de første 3 er testet."
+	        ],
+	        next: "Kjør Marc, Danny og Levels som første batch. Etter tallene: behold serien bare hvis minst én av tre gir tydelig respons."
+	      }
+	    };
+
+	    const lanes = [
+	      { id: "now", title: "Film nå", match: idea => idea.priority === "Film nå" }
+	    ];
+
+	    const FILTERS_STORAGE_KEY = "oskarContentFiltersUltraV1";
+	    const SELECTED_STORAGE_KEY = "oskarSelectedIdeasUltraV1";
+	    const savedFilters = JSON.parse(localStorage.getItem(FILTERS_STORAGE_KEY) || "{}");
+	    const filters = {
+	      search: "",
+	      ...savedFilters
+	    };
+	    let selectedIds = new Set(JSON.parse(localStorage.getItem(SELECTED_STORAGE_KEY) || "[]"));
+	    let currentIdeaId = null;
+
+	    function bucketLabel(idea) {
+	      if (idea.priority === "Film nå") return "Film nå";
+	      return "Backlog";
+	    }
+
+	    function matchesFilters(idea) {
+	      const brief = briefs[idea.id] || {};
+	      const briefText = [brief.concept, brief.context, brief.say, brief.make, brief.hooks, brief.real, brief.targets, brief.cut, brief.next].flat().filter(Boolean).join(" ");
+	      const haystack = [idea.id, idea.title, idea.source, idea.type, idea.family, idea.pillar, idea.track, idea.platform, idea.priority, idea.canFilm, idea.requiresSf, briefText].join(" ").toLowerCase();
+	      return !filters.search || haystack.includes(filters.search.toLowerCase());
+	    }
+
+	    function makeToolbar(targetId) {
+	      const target = document.getElementById(targetId);
+	      target.innerHTML = `
+	        <input aria-label="Søk" placeholder="Søk i ideer..." data-filter="search">
+	      `;
+	      target.querySelectorAll("[data-filter]").forEach(control => {
+	        control.value = filters.search || "";
+	        control.addEventListener("input", event => {
+	          filters[event.target.dataset.filter] = event.target.value;
+	          localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify({ search: filters.search }));
+	          renderAll();
+	        });
+	      });
+    }
+
+	    function cardHtml(idea) {
+	      const selected = selectedIds.has(idea.id);
+	      const brief = briefs[idea.id] || {};
+	      const concept = brief.concept || `${idea.pillar} / ${idea.track}`;
+	      return `
+	        <article class="idea-card ${selected ? "selected" : ""}" data-id="${idea.id}" role="button" tabindex="0">
+	          <div class="card-top">
+	            <span class="id">${idea.id}</span>
+	            <button type="button" class="quick-select ${selected ? "on" : ""}" data-select="${idea.id}" aria-pressed="${selected ? "true" : "false"}">${selected ? "Valgt" : "+ Velg"}</button>
+	          </div>
+	          <h4>${idea.title}</h4>
+	          <p class="concept">${escapeHtml(concept)}</p>
+	          <span class="open-brief">Klikk for brief</span>
+	        </article>
+	      `;
+	    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function bulletSection(title, items) {
+      if (!items || !items.length) return "";
+      return `
+        <div class="modal-section">
+          <h4>${escapeHtml(title)}</h4>
+          <ul>${items.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+        </div>
+      `;
+    }
+
+    function briefText(idea) {
+      const brief = briefs[idea.id];
+      if (!brief) return `${idea.id} - ${idea.title}`;
+      const sections = [
+        ["Hvem dette er:", brief.context],
+        ["Hva Oskar kan si:", brief.say],
+        ["Hva teamet skal lage:", brief.make],
+        ["Hook-forslag:", brief.hooks],
+        ["Hva som må være ekte:", brief.real],
+        ["Neste targets:", brief.targets],
+        ["Kutt / hold enkelt:", brief.cut]
+      ];
+      return [
+        `${idea.id} - ${idea.title}`,
+        `Prioritet: ${idea.priority}`,
+        `Plattform: ${idea.platform}`,
+        `Pilar/spor: ${idea.pillar} / ${idea.track}`,
+        "",
+        `Konsept: ${brief.concept}`,
+        ...sections.flatMap(([title, items]) => items && items.length ? ["", title, ...items.map(item => `- ${item}`)] : []),
+        "",
+        `Neste steg: ${brief.next}`
+      ].join("\n");
+    }
+
+    async function writeClipboard(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.style.position = "fixed";
+        textarea.style.left = "-9999px";
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        document.execCommand("copy");
+        textarea.remove();
+      }
+    }
+
+	    function saveSelected() {
+	      localStorage.setItem(SELECTED_STORAGE_KEY, JSON.stringify([...selectedIds]));
+	    }
+
+    function toggleSelected(id) {
+      if (selectedIds.has(id)) {
+        selectedIds.delete(id);
+      } else {
+        selectedIds.add(id);
+      }
+      saveSelected();
+      renderAll();
+      if (currentIdeaId === id) updateModalSelectionButton(id);
+    }
+
+    function updateModalSelectionButton(id) {
+      const button = document.getElementById("toggleSelected");
+      const selected = selectedIds.has(id);
+      button.textContent = selected ? "Fjern fra opptak" : "Velg til opptak";
+      button.classList.toggle("selected", selected);
+    }
+
+	    function renderFunnel() {
+	      const filtered = ideas.filter(matchesFilters);
+	      const laneMarkup = lanes.map(lane => {
+	        const laneIdeas = filtered.filter(lane.match);
+	        const body = laneIdeas.length ? laneIdeas.map(cardHtml).join("") : `<div class="empty">Ingen ideer med valgt filter.</div>`;
+	        return `<div class="lane"><h3>${lane.title}<span>${laneIdeas.length}</span></h3>${body}</div>`;
+	      }).join("");
+	      const backlogIdeas = filtered.filter(idea => idea.priority !== "Film nå");
+	      const backlogMarkup = `
+	        <details class="backlog">
+	          <summary>Backlog <span>${backlogIdeas.length}</span></summary>
+	          <div class="backlog-grid">
+	            ${backlogIdeas.length ? backlogIdeas.map(cardHtml).join("") : `<div class="empty">Ingen backlog med valgt søk.</div>`}
+	          </div>
+	        </details>
+	      `;
+	      document.getElementById("funnelLanes").innerHTML = laneMarkup + backlogMarkup;
+	    }
+
+	    function renderShootlist() {
+	      const selectedIdeas = ideas.filter(idea => selectedIds.has(idea.id));
+	      document.querySelector(".shootlist").classList.toggle("is-empty", !selectedIdeas.length);
+	      document.getElementById("selectedCount").textContent = `${selectedIdeas.length} valgt`;
+	      document.getElementById("selectedIdeas").innerHTML = selectedIdeas.length
+	        ? selectedIdeas.map(cardHtml).join("")
+	        : "";
+	    }
+
+	    function openIdea(id) {
+      const idea = ideas.find(item => item.id === id);
+      if (!idea) return;
+      currentIdeaId = id;
+      document.getElementById("modalId").textContent = idea.id;
+	      document.getElementById("modalTitle").textContent = idea.title;
+	      document.getElementById("modalTags").innerHTML = `
+	        <span class="tag">${bucketLabel(idea)}</span>
+	      `;
+	      document.getElementById("modalStatus").textContent = idea.platform;
+	      const brief = briefs[idea.id] || {
+        concept: "Kort ide fra masterarket.",
+        make: ["Fyll ut hook, scene, eier og proof for denne ideen."],
+        hooks: [],
+        real: ["Ideen må bestå bygger-test, sannhets-test og en-tese-test."],
+        next: "Neste steg: legg inn mer detaljert brief."
+	      };
+	      document.getElementById("modalConcept").textContent = brief.concept;
+	      document.getElementById("modalExpanded").innerHTML = [
+        bulletSection("Hvem dette er", brief.context),
+        bulletSection("Hva Oskar kan si", brief.say),
+	        bulletSection("Hva teamet skal lage", brief.make),
+        bulletSection("Hook-forslag", brief.hooks),
+	        bulletSection("Hva som må være ekte", brief.real),
+        bulletSection("Neste targets", brief.targets),
+        bulletSection("Kutt / hold enkelt", brief.cut),
+	        bulletSection("Neste steg", [brief.next])
+	      ].join("");
+	      updateModalSelectionButton(id);
+	      document.getElementById("ideaDialog").showModal();
+    }
+
+	    function renderAll() {
+	      renderShootlist();
+	      renderFunnel();
+	      document.querySelectorAll(".idea-card").forEach(card => {
+	        card.addEventListener("click", () => openIdea(card.dataset.id));
+	        card.addEventListener("keydown", event => {
+	          if (event.target.closest("[data-select]")) return;
+	          if (event.key === "Enter" || event.key === " ") {
+	            event.preventDefault();
+	            openIdea(card.dataset.id);
+	          }
+	        });
+	      });
+	      document.querySelectorAll("[data-select]").forEach(button => {
+	        button.addEventListener("click", event => {
+	          event.stopPropagation();
+	          toggleSelected(event.currentTarget.dataset.select);
+	        });
+	      });
+	    }
+
+    document.getElementById("closeDialog").addEventListener("click", () => {
+      document.getElementById("ideaDialog").close();
+    });
+
+    document.getElementById("toggleSelected").addEventListener("click", () => {
+      if (currentIdeaId) toggleSelected(currentIdeaId);
+    });
+
+    document.getElementById("copyBrief").addEventListener("click", async () => {
+	      const idea = ideas.find(item => item.id === currentIdeaId);
+	      if (!idea) return;
+	      const text = briefText(idea);
+	      await writeClipboard(text);
+	      document.getElementById("copyBrief").textContent = "Kopiert";
+	      setTimeout(() => document.getElementById("copyBrief").textContent = "Kopier brief", 1200);
+	    });
+
+    document.getElementById("copySelected").addEventListener("click", async () => {
+      const selectedIdeas = ideas.filter(idea => selectedIds.has(idea.id));
+      if (!selectedIdeas.length) return;
+	      const text = selectedIdeas.map(briefText).join("\n\n---\n\n");
+	      await writeClipboard(text);
+	      document.getElementById("copySelected").textContent = "Kopiert";
+	      setTimeout(() => document.getElementById("copySelected").textContent = "Kopier valgte", 1200);
+	    });
+
+	    makeToolbar("toolbar");
+	    renderAll();
+  </script>
+</body>
+</html>
