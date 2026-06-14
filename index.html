@@ -702,8 +702,8 @@
 	    }
 
 	    .toolbar {
-	      grid-template-columns: minmax(260px, 420px);
-	      margin: 18px 0 20px;
+	      grid-template-columns: minmax(260px, 420px) auto auto;
+	      margin: 18px 0 10px;
 	    }
 
 	    .toolbar input,
@@ -715,6 +715,37 @@
 	    .shootlist {
 	      box-shadow: none;
 	      margin-bottom: 18px;
+	    }
+
+	    .order-note {
+	      display: flex;
+	      align-items: center;
+	      justify-content: space-between;
+	      gap: 12px;
+	      margin: 0 0 14px;
+	      padding: 10px 12px;
+	      border: 1px solid var(--line);
+	      border-radius: 8px;
+	      background: #fff;
+	      color: var(--muted);
+	      font-size: 14px;
+	      line-height: 1.35;
+	    }
+
+	    .order-note.hidden {
+	      display: none;
+	    }
+
+	    .order-note strong {
+	      color: var(--ink);
+	    }
+
+	    .share-status {
+	      min-height: 20px;
+	      margin: 0 0 14px;
+	      color: var(--green);
+	      font-size: 14px;
+	      font-weight: 700;
 	    }
 
 	    .shootlist.is-empty {
@@ -773,11 +804,32 @@
 	      border-bottom: 1px solid var(--line);
 	    }
 
+	    .lane-hint {
+	      display: block;
+	      margin-top: 4px;
+	      color: var(--muted);
+	      font-size: 13px;
+	      font-weight: 400;
+	    }
+
+	    .lane-body {
+	      min-height: 90px;
+	    }
+
 	    .idea-card {
 	      border-left-width: 1px;
 	      box-shadow: none;
 	      margin-bottom: 8px;
 	      padding: 12px;
+	    }
+
+	    .idea-card.dragging {
+	      opacity: .48;
+	    }
+
+	    .idea-card.drag-over {
+	      border-color: var(--green);
+	      background: #fbfffd;
 	    }
 
 	    .idea-card:hover {
@@ -789,6 +841,60 @@
 	    .idea-card h4 {
 	      margin: 8px 0 6px;
 	      font-size: 17px;
+	    }
+
+	    .card-meta {
+	      display: inline-flex;
+	      align-items: center;
+	      gap: 8px;
+	      min-width: 0;
+	    }
+
+	    .rank {
+	      display: inline-flex;
+	      align-items: center;
+	      justify-content: center;
+	      width: 28px;
+	      height: 28px;
+	      border-radius: 8px;
+	      background: var(--ink);
+	      color: #fff;
+	      font-size: 13px;
+	      font-weight: 800;
+	    }
+
+	    .drag-hint {
+	      color: var(--muted);
+	      font-size: 18px;
+	      line-height: 1;
+	      cursor: grab;
+	      user-select: none;
+	    }
+
+	    .card-actions {
+	      display: flex;
+	      align-items: center;
+	      gap: 6px;
+	      flex: 0 0 auto;
+	    }
+
+	    .move-btn {
+	      display: inline-flex;
+	      align-items: center;
+	      justify-content: center;
+	      width: 30px;
+	      height: 30px;
+	      border: 1px solid var(--line);
+	      border-radius: 7px;
+	      background: #fff;
+	      color: var(--ink);
+	      cursor: pointer;
+	      font-weight: 800;
+	    }
+
+	    .move-btn:disabled {
+	      opacity: .35;
+	      cursor: not-allowed;
 	    }
 
 	    .concept {
@@ -856,11 +962,16 @@
 	      <section id="funnel" class="section active">
 	        <div class="topline">
 		          <div>
-		            <h2>Velg hva vi filmer</h2>
-		            <p>Ekte bygging, ekte kunder, ekte founder-proof.</p>
+		            <h2>Hva filmer vi nå?</h2>
+		            <p>Dra kortene eller bruk pilene for å sette rekkefølgen. Klikk et kort for brief.</p>
 		          </div>
 		        </div>
 		        <div class="toolbar" id="toolbar"></div>
+	        <div class="order-note hidden" id="sharedOrderNote">
+	          <span><strong>Du ser en delt rekkefølge.</strong> Trykk knappen hvis denne skal lagres i din browser.</span>
+	          <button class="ghost-btn" id="adoptSharedOrder">Bruk denne rekkefølgen</button>
+	        </div>
+	        <div class="share-status" id="shareStatus" aria-live="polite"></div>
 	        <div class="shootlist">
 	          <div class="shootlist-head">
 	            <h3>Shootliste <span class="tag selected-tag" id="selectedCount">0 valgt</span></h3>
@@ -1566,23 +1677,82 @@
 	      }
 	    };
 
-	    const lanes = [
-	      { id: "now", title: "Film nå", match: idea => idea.priority === "Film nå" }
-	    ];
-
 	    const FILTERS_STORAGE_KEY = "oskarContentFiltersUltraV1";
 	    const SELECTED_STORAGE_KEY = "oskarSelectedIdeasUltraV1";
+	    const ORDER_STORAGE_KEY = "oskarIdeaOrderV2";
+	    const TEAM_BASE_URL = "https://kodskar.github.io/oskar-content-dashboard-team/";
+	    const visibleIdeaIds = ideas.filter(idea => idea.priority === "Film nå").map(idea => idea.id);
+	    const defaultOrder = {
+	      next: visibleIdeaIds.slice(0, 6),
+	      later: visibleIdeaIds.slice(6)
+	    };
 	    const savedFilters = JSON.parse(localStorage.getItem(FILTERS_STORAGE_KEY) || "{}");
 	    const filters = {
 	      search: "",
 	      ...savedFilters
 	    };
 	    let selectedIds = new Set(JSON.parse(localStorage.getItem(SELECTED_STORAGE_KEY) || "[]"));
+	    let sharedOrder = parseSharedOrder();
+	    let activeOrder = normalizeOrder(sharedOrder || JSON.parse(localStorage.getItem(ORDER_STORAGE_KEY) || "null") || defaultOrder);
+	    let hasSharedOrder = Boolean(sharedOrder);
+	    let draggedId = null;
 	    let currentIdeaId = null;
 
 	    function bucketLabel(idea) {
-	      if (idea.priority === "Film nå") return "Film nå";
-	      return "Backlog";
+	      if (idea.priority === "Film nå") return "Ideer";
+	      return "Idébank";
+	    }
+
+	    function parseIdList(value) {
+	      return (value || "")
+	        .split(",")
+	        .map(id => id.trim())
+	        .filter(Boolean);
+	    }
+
+	    function parseSharedOrder() {
+	      const params = new URLSearchParams(window.location.search);
+	      const next = parseIdList(params.get("next"));
+	      const later = parseIdList(params.get("later"));
+	      const legacyOrder = parseIdList(params.get("order"));
+	      if (next.length || later.length) return { next, later };
+	      if (legacyOrder.length) return { next: legacyOrder.slice(0, 6), later: legacyOrder.slice(6) };
+	      return null;
+	    }
+
+	    function normalizeOrder(order) {
+	      const valid = new Set(visibleIdeaIds);
+	      const used = new Set();
+	      const normalizeList = list => (Array.isArray(list) ? list : [])
+	        .filter(id => valid.has(id) && !used.has(id))
+	        .filter(id => {
+	          used.add(id);
+	          return true;
+	        });
+	      const next = normalizeList(order.next);
+	      const later = normalizeList(order.later);
+	      visibleIdeaIds.forEach(id => {
+	        if (!used.has(id)) later.push(id);
+	      });
+	      return { next, later };
+	    }
+
+	    function saveOrder() {
+	      localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(activeOrder));
+	    }
+
+	    function ideaById(id) {
+	      return ideas.find(idea => idea.id === id);
+	    }
+
+	    function orderedIdeas(laneId) {
+	      return activeOrder[laneId].map(ideaById).filter(Boolean);
+	    }
+
+	    function rankMap() {
+	      const map = new Map();
+	      [...activeOrder.next, ...activeOrder.later].forEach((id, index) => map.set(id, index + 1));
+	      return map;
 	    }
 
 	    function matchesFilters(idea) {
@@ -1596,6 +1766,8 @@
 	      const target = document.getElementById(targetId);
 	      target.innerHTML = `
 	        <input aria-label="Søk" placeholder="Søk i ideer..." data-filter="search">
+	        <button class="ghost-btn" id="copyTeamLink" type="button">Kopier teamlenke</button>
+	        <button class="ghost-btn" id="resetOrder" type="button">Tilbakestill rekkefølge</button>
 	      `;
 	      target.querySelectorAll("[data-filter]").forEach(control => {
 	        control.value = filters.search || "";
@@ -1605,17 +1777,63 @@
 	          renderAll();
 	        });
 	      });
+	      document.getElementById("copyTeamLink").addEventListener("click", copyTeamLink);
+	      document.getElementById("resetOrder").addEventListener("click", resetOrder);
     }
 
-	    function cardHtml(idea) {
+	    function teamLink() {
+	      const url = new URL(TEAM_BASE_URL);
+	      url.searchParams.set("next", activeOrder.next.join(","));
+	      url.searchParams.set("later", activeOrder.later.join(","));
+	      return url.toString();
+	    }
+
+	    function setShareStatus(message) {
+	      const target = document.getElementById("shareStatus");
+	      target.textContent = message;
+	      if (message) {
+	        setTimeout(() => {
+	          if (target.textContent === message) target.textContent = "";
+	        }, 2400);
+	      }
+	    }
+
+	    async function copyTeamLink() {
+	      await writeClipboard(teamLink());
+	      setShareStatus("Lenke kopiert - send den til teamet");
+	    }
+
+	    function resetOrder() {
+	      activeOrder = normalizeOrder(defaultOrder);
+	      hasSharedOrder = false;
+	      saveOrder();
+	      renderAll();
+	      setShareStatus("Rekkefølgen er tilbakestilt");
+	    }
+
+	    function adoptSharedOrder() {
+	      hasSharedOrder = false;
+	      saveOrder();
+	      renderAll();
+	      setShareStatus("Delt rekkefølge er lagret i denne browseren");
+	    }
+
+	    function cardHtml(idea, options = {}) {
 	      const selected = selectedIds.has(idea.id);
 	      const brief = briefs[idea.id] || {};
 	      const concept = brief.concept || `${idea.pillar} / ${idea.track}`;
+	      const sortable = Boolean(options.sortable);
+	      const rank = options.rank ? `<span class="rank">${options.rank}</span>` : "";
+	      const dragHandle = sortable ? `<span class="drag-hint" aria-hidden="true">↕</span>` : "";
+	      const moveControls = sortable ? `
+	        <button type="button" class="move-btn" data-move="${idea.id}" data-direction="-1" aria-label="Flytt opp">↑</button>
+	        <button type="button" class="move-btn" data-move="${idea.id}" data-direction="1" aria-label="Flytt ned">↓</button>
+	      ` : "";
 	      return `
-	        <article class="idea-card ${selected ? "selected" : ""}" data-id="${idea.id}" role="button" tabindex="0">
+	        <article class="idea-card ${selected ? "selected" : ""}" data-id="${idea.id}" ${options.laneId ? `data-lane="${options.laneId}"` : ""} ${sortable ? `draggable="true"` : ""} role="button" tabindex="0">
 	          <div class="card-top">
-	            <span class="id">${idea.id}</span>
-	            <button type="button" class="quick-select ${selected ? "on" : ""}" data-select="${idea.id}" aria-pressed="${selected ? "true" : "false"}">${selected ? "Valgt" : "+ Velg"}</button>
+	            <span class="card-meta">${rank}<span class="id">${idea.id}</span>${dragHandle}</span>
+	            <span class="card-actions">${moveControls}<button type="button" class="quick-select ${selected ? "on" : ""}" data-select="${idea.id}" aria-pressed="${selected ? "true" : "false"}">${selected ? "Valgt" : "+ Velg"}</button></span>
 	          </div>
 	          <h4>${idea.title}</h4>
 	          <p class="concept">${escapeHtml(concept)}</p>
@@ -1699,30 +1917,84 @@
       if (currentIdeaId === id) updateModalSelectionButton(id);
     }
 
-    function updateModalSelectionButton(id) {
-      const button = document.getElementById("toggleSelected");
-      const selected = selectedIds.has(id);
-      button.textContent = selected ? "Fjern fra opptak" : "Velg til opptak";
-      button.classList.toggle("selected", selected);
-    }
+	    function updateModalSelectionButton(id) {
+	      const button = document.getElementById("toggleSelected");
+	      const selected = selectedIds.has(id);
+	      button.textContent = selected ? "Fjern fra opptak" : "Velg til opptak";
+	      button.classList.toggle("selected", selected);
+	    }
+
+	    function moveIdea(id, direction) {
+	      const laneId = activeOrder.next.includes(id) ? "next" : activeOrder.later.includes(id) ? "later" : null;
+	      if (!laneId) return;
+	      const list = activeOrder[laneId];
+	      const index = list.indexOf(id);
+	      if (direction < 0) {
+	        if (index > 0) {
+	          [list[index - 1], list[index]] = [list[index], list[index - 1]];
+	        } else if (laneId === "later") {
+	          list.splice(index, 1);
+	          activeOrder.next.push(id);
+	        }
+	      } else {
+	        if (index < list.length - 1) {
+	          [list[index], list[index + 1]] = [list[index + 1], list[index]];
+	        } else if (laneId === "next") {
+	          list.splice(index, 1);
+	          activeOrder.later.unshift(id);
+	        }
+	      }
+	      hasSharedOrder = false;
+	      saveOrder();
+	      renderAll();
+	    }
+
+	    function moveDraggedIdea(id, targetLane, beforeId = null) {
+	      if (!id || !targetLane || !activeOrder[targetLane]) return;
+	      activeOrder.next = activeOrder.next.filter(item => item !== id);
+	      activeOrder.later = activeOrder.later.filter(item => item !== id);
+	      const targetList = activeOrder[targetLane];
+	      const beforeIndex = beforeId ? targetList.indexOf(beforeId) : -1;
+	      if (beforeIndex >= 0) {
+	        targetList.splice(beforeIndex, 0, id);
+	      } else {
+	        targetList.push(id);
+	      }
+	      hasSharedOrder = false;
+	      saveOrder();
+	      renderAll();
+	    }
 
 	    function renderFunnel() {
 	      const filtered = ideas.filter(matchesFilters);
-	      const laneMarkup = lanes.map(lane => {
-	        const laneIdeas = filtered.filter(lane.match);
-	        const body = laneIdeas.length ? laneIdeas.map(cardHtml).join("") : `<div class="empty">Ingen ideer med valgt filter.</div>`;
-	        return `<div class="lane"><h3>${lane.title}<span>${laneIdeas.length}</span></h3>${body}</div>`;
+	      const ranks = rankMap();
+	      const laneConfig = [
+	        { id: "next", title: "Neste opp", hint: "Det teamet bør filme først." },
+	        { id: "later", title: "Senere", hint: "Bra ideer som kan vente litt." }
+	      ];
+	      const laneMarkup = laneConfig.map(lane => {
+	        const laneIdeas = orderedIdeas(lane.id).filter(matchesFilters);
+	        const body = laneIdeas.length
+	          ? laneIdeas.map(idea => cardHtml(idea, { sortable: true, laneId: lane.id, rank: ranks.get(idea.id) })).join("")
+	          : `<div class="empty">Ingen ideer matcher søket</div>`;
+	        return `
+	          <div class="lane" data-lane="${lane.id}">
+	            <h3>${lane.title}<span>${laneIdeas.length}</span><span class="lane-hint">${lane.hint}</span></h3>
+	            <div class="lane-body" data-lane-body="${lane.id}">${body}</div>
+	          </div>
+	        `;
 	      }).join("");
 	      const backlogIdeas = filtered.filter(idea => idea.priority !== "Film nå");
 	      const backlogMarkup = `
 	        <details class="backlog">
-	          <summary>Backlog <span>${backlogIdeas.length}</span></summary>
+	          <summary>Idébank (klikk for å vise) <span>${backlogIdeas.length}</span></summary>
 	          <div class="backlog-grid">
 	            ${backlogIdeas.length ? backlogIdeas.map(cardHtml).join("") : `<div class="empty">Ingen backlog med valgt søk.</div>`}
 	          </div>
 	        </details>
 	      `;
 	      document.getElementById("funnelLanes").innerHTML = laneMarkup + backlogMarkup;
+	      document.getElementById("sharedOrderNote").classList.toggle("hidden", !hasSharedOrder);
 	    }
 
 	    function renderShootlist() {
@@ -1785,7 +2057,50 @@
 	          toggleSelected(event.currentTarget.dataset.select);
 	        });
 	      });
+	      document.querySelectorAll("[data-move]").forEach(button => {
+	        button.addEventListener("click", event => {
+	          event.stopPropagation();
+	          moveIdea(event.currentTarget.dataset.move, Number(event.currentTarget.dataset.direction));
+	        });
+	      });
+	      document.querySelectorAll(".idea-card[draggable='true']").forEach(card => {
+	        card.addEventListener("dragstart", event => {
+	          draggedId = card.dataset.id;
+	          card.classList.add("dragging");
+	          event.dataTransfer.effectAllowed = "move";
+	          event.dataTransfer.setData("text/plain", draggedId);
+	        });
+	        card.addEventListener("dragend", () => {
+	          draggedId = null;
+	          document.querySelectorAll(".dragging, .drag-over").forEach(element => element.classList.remove("dragging", "drag-over"));
+	        });
+	        card.addEventListener("dragover", event => {
+	          event.preventDefault();
+	          card.classList.add("drag-over");
+	        });
+	        card.addEventListener("dragleave", () => {
+	          card.classList.remove("drag-over");
+	        });
+	        card.addEventListener("drop", event => {
+	          event.preventDefault();
+	          event.stopPropagation();
+	          const id = event.dataTransfer.getData("text/plain") || draggedId;
+	          if (id && id !== card.dataset.id) moveDraggedIdea(id, card.dataset.lane, card.dataset.id);
+	        });
+	      });
+	      document.querySelectorAll("[data-lane-body]").forEach(laneBody => {
+	        laneBody.addEventListener("dragover", event => {
+	          event.preventDefault();
+	        });
+	        laneBody.addEventListener("drop", event => {
+	          event.preventDefault();
+	          const id = event.dataTransfer.getData("text/plain") || draggedId;
+	          if (id && !event.target.closest(".idea-card")) moveDraggedIdea(id, laneBody.dataset.laneBody);
+	        });
+	      });
 	    }
+
+    document.getElementById("adoptSharedOrder").addEventListener("click", adoptSharedOrder);
 
     document.getElementById("closeDialog").addEventListener("click", () => {
       document.getElementById("ideaDialog").close();
