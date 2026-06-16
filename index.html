@@ -597,9 +597,48 @@
       color: var(--ink);
     }
 
-    .modal-section li + li {
-      margin-top: 6px;
-    }
+	    .modal-section li + li {
+	      margin-top: 6px;
+	    }
+
+	    .form-grid {
+	      display: grid;
+	      gap: 12px;
+	    }
+
+	    .form-grid label {
+	      display: grid;
+	      gap: 6px;
+	      color: var(--muted);
+	      font-size: 13px;
+	      font-weight: 800;
+	    }
+
+	    .form-grid input,
+	    .form-grid select,
+	    .form-grid textarea {
+	      width: 100%;
+	      border: 1px solid var(--line);
+	      border-radius: 8px;
+	      background: #fff;
+	      color: var(--ink);
+	      padding: 10px 12px;
+	      font: inherit;
+	    }
+
+	    .form-grid textarea {
+	      min-height: 110px;
+	      resize: vertical;
+	    }
+
+	    .generated-code {
+	      display: none;
+	      margin-top: 8px;
+	    }
+
+	    .generated-code.is-visible {
+	      display: block;
+	    }
 
     .modal-actions {
       display: flex;
@@ -702,7 +741,7 @@
 	    }
 
 	    .toolbar {
-	      grid-template-columns: minmax(260px, 420px) auto auto;
+	      grid-template-columns: minmax(260px, 1fr) auto auto auto auto auto;
 	      margin: 18px 0 10px;
 	    }
 
@@ -748,6 +787,35 @@
 	      font-weight: 700;
 	    }
 
+	    .channel-filter {
+	      display: inline-flex;
+	      gap: 4px;
+	      padding: 4px;
+	      border: 1px solid var(--line);
+	      border-radius: 8px;
+	      background: #fff;
+	    }
+
+	    .channel-filter button {
+	      border: 0;
+	      border-radius: 6px;
+	      background: transparent;
+	      color: var(--muted);
+	      padding: 8px 10px;
+	      cursor: pointer;
+	      font-weight: 800;
+	    }
+
+	    .channel-filter button.active {
+	      background: var(--ink);
+	      color: #fff;
+	    }
+
+	    .ghost-btn.active {
+	      background: var(--ink);
+	      color: #fff;
+	    }
+
 	    .shootlist.is-empty {
 	      display: none;
 	    }
@@ -762,34 +830,65 @@
 	    }
 
 	    .funnel {
+	      grid-template-columns: 1fr;
+	      gap: 18px;
+	    }
+
+	    .time-section {
+	      display: grid;
+	      gap: 12px;
+	      padding: 18px;
+	      border-bottom: 1px solid var(--line);
+	      border: 1px solid var(--line);
+	      border-radius: 8px;
+	      background: rgba(255,255,255,.62);
+	    }
+
+	    .time-section h3 {
+	      display: flex;
+	      align-items: baseline;
+	      justify-content: space-between;
+	      gap: 12px;
+	      margin: 0;
+	      font-size: 24px;
+	    }
+
+	    .time-section h3 span {
+	      color: var(--muted);
+	      font-size: 13px;
+	    }
+
+	    .time-grid {
+	      display: grid;
 	      grid-template-columns: repeat(2, minmax(0, 1fr));
 	      gap: 18px;
 	    }
 
-	    .backlog {
-	      grid-column: 1 / -1;
-	      margin-top: 6px;
-	      border-top: 1px solid var(--line);
-	      padding-top: 12px;
+	    .time-grid.flat {
+	      grid-template-columns: 1fr;
 	    }
 
-	    .backlog summary {
-	      cursor: pointer;
+	    .channel-dropbar {
+	      display: flex;
+	      flex-wrap: wrap;
+	      gap: 8px;
+	    }
+
+	    .channel-drop {
+	      border: 1px dashed var(--line);
+	      border-radius: 8px;
+	      background: rgba(255,255,255,.6);
 	      color: var(--muted);
-	      font-weight: 800;
-	      list-style-position: inside;
-	    }
-
-	    .backlog summary span {
-	      float: right;
+	      padding: 8px 10px;
 	      font-size: 13px;
+	      font-weight: 800;
+	      cursor: copy;
 	    }
 
-	    .backlog-grid {
-	      display: grid;
-	      grid-template-columns: repeat(2, minmax(0, 1fr));
-	      gap: 10px 18px;
-	      margin-top: 12px;
+	    .channel-drop.drag-over {
+	      border-color: var(--green);
+	      background: var(--green-soft);
+	      color: var(--green);
 	    }
 
 	    .lane {
@@ -876,6 +975,56 @@
 	      align-items: center;
 	      gap: 6px;
 	      flex: 0 0 auto;
+	      flex-wrap: wrap;
+	      justify-content: flex-end;
+	    }
+
+	    .channel-badge {
+	      display: inline-flex;
+	      align-items: center;
+	      min-height: 24px;
+	      padding: 4px 7px;
+	      border-radius: 7px;
+	      font-size: 12px;
+	      font-weight: 800;
+	    }
+
+	    .channel-native {
+	      background: var(--green-soft);
+	      color: var(--green);
+	    }
+
+	    .channel-oskar {
+	      background: var(--gold-soft);
+	      color: var(--gold);
+	    }
+
+	    .channel-begge {
+	      background: var(--blue-soft);
+	      color: var(--blue);
+	    }
+
+	    .risk-badge {
+	      display: inline-flex;
+	      align-items: center;
+	      min-height: 24px;
+	      padding: 4px 7px;
+	      border-radius: 7px;
+	      background: var(--red-soft);
+	      color: var(--red);
+	      font-size: 12px;
+	      font-weight: 800;
+	    }
+
+	    .tiny-btn {
+	      border: 1px solid var(--line);
+	      border-radius: 7px;
+	      background: #fff;
+	      color: var(--ink);
+	      padding: 6px 8px;
+	      cursor: pointer;
+	      font-size: 12px;
+	      font-weight: 800;
 	    }
 
 	    .move-btn {
@@ -929,7 +1078,7 @@
 
 	    @media (max-width: 900px) {
 	      .funnel,
-	      .backlog-grid,
+	      .time-grid,
 	      .shootlist-body {
 	        grid-template-columns: 1fr;
 	      }
@@ -1007,35 +1156,103 @@
     </div>
   </dialog>
 
+  <dialog id="ideaFormDialog">
+    <div class="modal-head">
+      <span class="tag" id="formModeTag">Ny idé</span>
+      <h3 id="ideaFormTitle">Legg til idé</h3>
+      <p class="modal-status">Lagres lokalt i denne browseren. Kopier JS-snutt hvis ideen skal inn permanent.</p>
+    </div>
+    <form id="ideaForm">
+      <div class="modal-body">
+        <div class="form-grid">
+          <input type="hidden" id="editIdeaId">
+          <label>
+            Tittel
+            <input id="ideaTitleInput" required>
+          </label>
+          <label>
+            Tid
+            <select id="ideaTimingInput">
+              <option value="for">Før reise</option>
+              <option value="tur">På turen</option>
+              <option value="usa">I USA</option>
+            </select>
+          </label>
+          <label>
+            Kanal
+            <select id="ideaChannelInput">
+              <option value="native">Native</option>
+              <option value="oskar">Oskar</option>
+              <option value="begge">Begge</option>
+            </select>
+          </label>
+          <label>
+            Kort brief
+            <textarea id="ideaBriefInput" placeholder="Hva ser vi? Hva må være ekte?"></textarea>
+          </label>
+        </div>
+        <div class="generated-code" id="generatedCodeWrap">
+          <label class="form-grid">
+            JS-snutt til permanent commit
+            <textarea id="generatedCode" readonly></textarea>
+          </label>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <div class="modal-action-group">
+          <button class="select-btn" type="submit">Lagre lokalt</button>
+          <button class="copy-btn" type="button" id="copyGeneratedCode">Kopier JS-snutt</button>
+        </div>
+        <button class="close" type="button" id="closeIdeaForm">Lukk</button>
+      </div>
+    </form>
+  </dialog>
+
   <script>
     const ideas = [
-      {"id":"X-8","title":"Website In, Content Out - Live In Town","source":"Live demo","type":"Serie","family":"B - Kunde","pillar":"Native","track":"Kunde/Brand","platform":"TikTok + X","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå"},
-      {"id":"X-9","title":"Norgeskamp Business Challenge","source":"Live demo","type":"One-off/Serie","family":"B - Kunde","pillar":"Native","track":"Kunde/Brand","platform":"TikTok + X","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå"},
-      {"id":"X-1","title":"Native vs Marc Lou's Rules","source":"X-repost","type":"One-off","family":"X - Repost","pillar":"Native","track":"Brand/Investor","platform":"X + TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå"},
-      {"id":"X-7","title":"Native vs Danny / HeadshotPro","source":"X-repost","type":"One-off","family":"X - Repost","pillar":"Native","track":"Brand/Investor","platform":"X + TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå"},
-      {"id":"X-3","title":"Native vs Levels / Photo AI","source":"X-repost","type":"One-off","family":"X - Repost","pillar":"Native","track":"Brand/Investor","platform":"X + TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå"},
-      {"id":"R1-1","title":"Agency without the bullshit","source":"Rapport 1","type":"One-off","family":"Post","pillar":"Native","track":"Kunde","platform":"LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk"},
-      {"id":"R1-2","title":"2000 customers in 11 weeks, here's what broke","source":"Rapport 1","type":"One-off","family":"Post","pillar":"Native","track":"Investor","platform":"LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk"},
-      {"id":"R1-3","title":"The problem was never AI","source":"Rapport 1","type":"One-off","family":"Post","pillar":"AI + Native","track":"Kunde/Investor","platform":"LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk"},
-      {"id":"R1-4","title":"SMB-demo (tekst)","source":"Rapport 1","type":"One-off","family":"Post/Video","pillar":"Native","track":"Kunde/Brand","platform":"TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå"},
-      {"id":"R1-5","title":"I read one book, changed one thing","source":"Rapport 1","type":"Serie","family":"Post/Video","pillar":"Bøker","track":"Brand/Investor","platform":"TikTok","canFilm":"Delvis","requiresSf":"Nei","priority":"Vurder"},
-      {"id":"R1-6","title":"America is insane (in a good way)","source":"Rapport 1","type":"One-off","family":"Post","pillar":"Norge","track":"Brand","platform":"X","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk"},
-      {"id":"R1-7","title":"Reading is not the flex","source":"Rapport 1","type":"One-off","family":"Post","pillar":"Bøker","track":"Brand/Investor","platform":"X","canFilm":"Delvis","requiresSf":"Nei","priority":"Vurder"},
-      {"id":"R2-1","title":"Building Native From SF: One Proof Per Day","source":"Rapport 2","type":"Serie","family":"A - SF","pillar":"Native","track":"Brand/Investor","platform":"TikTok","canFilm":"Nei","requiresSf":"Ja","priority":"Vurder"},
-      {"id":"R2-5","title":"The Investor Whiteboard Test","source":"Rapport 2","type":"One-off","family":"A - SF","pillar":"Native","track":"Investor","platform":"LinkedIn + TikTok","canFilm":"Nei","requiresSf":"Ja","priority":"Vurder"},
-      {"id":"R2-6","title":"Norway Pitch vs SF Pitch","source":"Rapport 2","type":"One-off","family":"A - SF","pillar":"Norge + Native","track":"Brand/Investor","platform":"TikTok + X","canFilm":"Delvis","requiresSf":"Delvis","priority":"Sterk"},
-      {"id":"R2-7","title":"The 24-Hour Product Decision","source":"Rapport 2","type":"One-off","family":"A - SF","pillar":"Native","track":"Investor","platform":"LinkedIn + TikTok","canFilm":"Delvis","requiresSf":"Nei","priority":"Vurder"},
-      {"id":"R2-9","title":"I Made You Something Free","source":"Rapport 2","type":"Serie","family":"B - Kunde","pillar":"Native","track":"Kunde/Brand","platform":"TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå"},
-      {"id":"R2-10","title":"Owner Presses The Button","source":"Rapport 2","type":"One-off/Serie","family":"B - Kunde","pillar":"Native","track":"Kunde","platform":"TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå"},
-      {"id":"R2-11","title":"The Tone Test","source":"Rapport 2","type":"One-off","family":"B - Kunde","pillar":"Native","track":"Kunde","platform":"TikTok + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå"},
-      {"id":"R2-12","title":"Before/After Feed Wall","source":"Rapport 2","type":"Serie","family":"B - Kunde","pillar":"Native","track":"Kunde","platform":"TikTok + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk"},
-      {"id":"R2-13","title":"Founder Proof Friday","source":"Rapport 2","type":"Serie","family":"C - Bevis","pillar":"Native","track":"Investor","platform":"LinkedIn + X","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk"},
-      {"id":"R2-14","title":"The $45k AI Bill On Screen","source":"Rapport 2","type":"One-off","family":"C - Bevis","pillar":"Native + AI","track":"Investor/Kunde","platform":"TikTok + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå"},
-      {"id":"R2-15","title":"Kill The Feature Live","source":"Rapport 2","type":"One-off","family":"C - Bevis","pillar":"Native","track":"Investor","platform":"LinkedIn + TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk"},
-	      {"id":"R2-16","title":"Customer Call, No Camera On Customer","source":"Rapport 2","type":"One-off/Serie","family":"C - Bevis","pillar":"Native","track":"Investor/Kunde","platform":"LinkedIn + TikTok","canFilm":"Delvis","requiresSf":"Nei","priority":"Vurder"},
-	      {"id":"X-2","title":"7 Products, One Afternoon Of Content","source":"X-repost","type":"One-off","family":"X - Repost","pillar":"Native","track":"Brand/Investor","platform":"X","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå"},
-	      {"id":"X-4","title":"Can Native Do A Health Brand Without Making It Cringe?","source":"X-repost","type":"One-off","family":"X - Repost","pillar":"Native","track":"Brand/Investor","platform":"X + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk"},
-	      {"id":"X-6","title":"Native vs Founder Rules","source":"X-repost","type":"Serie","family":"X - Repost","pillar":"Native","track":"Brand/Investor","platform":"X + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk"}
+      {"id":"X-8","title":"Website In, Content Out - Live In Town","source":"Live demo","type":"Serie","family":"B - Kunde","pillar":"Native","track":"Kunde/Brand","platform":"TikTok + X","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"begge"},
+      {"id":"X-9","title":"Norgeskamp Business Challenge","source":"Live demo","type":"One-off/Serie","family":"B - Kunde","pillar":"Native","track":"Kunde/Brand","platform":"TikTok + X","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"oskar"},
+      {"id":"X-1","title":"Native vs Marc Lou's Rules","source":"X-repost","type":"One-off","family":"X - Repost","pillar":"Native","track":"Brand/Investor","platform":"X + TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"begge"},
+      {"id":"X-7","title":"Native vs Danny / HeadshotPro","source":"X-repost","type":"One-off","family":"X - Repost","pillar":"Native","track":"Brand/Investor","platform":"X + TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"begge"},
+      {"id":"X-3","title":"Native vs Levels / Photo AI","source":"X-repost","type":"One-off","family":"X - Repost","pillar":"Native","track":"Brand/Investor","platform":"X + TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"begge"},
+      {"id":"R1-1","title":"Agency without the bullshit","source":"Rapport 1","type":"One-off","family":"Post","pillar":"Native","track":"Kunde","platform":"LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk","timing":"for","channel":"native"},
+      {"id":"R1-2","title":"2000 customers in 11 weeks, here's what broke","source":"Rapport 1","type":"One-off","family":"Post","pillar":"Native","track":"Investor","platform":"LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk","timing":"for","channel":"native"},
+      {"id":"R1-3","title":"The problem was never AI","source":"Rapport 1","type":"One-off","family":"Post","pillar":"AI + Native","track":"Kunde/Investor","platform":"LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk","timing":"for","channel":"native"},
+      {"id":"R1-4","title":"SMB-demo (tekst)","source":"Rapport 1","type":"One-off","family":"Post/Video","pillar":"Native","track":"Kunde/Brand","platform":"TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"native"},
+      {"id":"R1-5","title":"I read one book, changed one thing","source":"Rapport 1","type":"Serie","family":"Post/Video","pillar":"Bøker","track":"Brand/Investor","platform":"TikTok","canFilm":"Delvis","requiresSf":"Nei","priority":"Vurder","timing":"for","channel":"oskar"},
+      {"id":"R1-6","title":"America is insane (in a good way)","source":"Rapport 1","type":"One-off","family":"Post","pillar":"Norge","track":"Brand","platform":"X","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk","timing":"usa","channel":"oskar"},
+      {"id":"R1-7","title":"Reading is not the flex","source":"Rapport 1","type":"One-off","family":"Post","pillar":"Bøker","track":"Brand/Investor","platform":"X","canFilm":"Delvis","requiresSf":"Nei","priority":"Vurder","timing":"for","channel":"oskar"},
+      {"id":"R2-1","title":"Building Native From SF: One Proof Per Day","source":"Rapport 2","type":"Serie","family":"A - SF","pillar":"Native","track":"Brand/Investor","platform":"TikTok","canFilm":"Nei","requiresSf":"Ja","priority":"Vurder","timing":"usa","channel":"begge"},
+      {"id":"R2-5","title":"The Investor Whiteboard Test","source":"Rapport 2","type":"One-off","family":"A - SF","pillar":"Native","track":"Investor","platform":"LinkedIn + TikTok","canFilm":"Nei","requiresSf":"Ja","priority":"Vurder","timing":"usa","channel":"native"},
+      {"id":"R2-6","title":"Norway Pitch vs SF Pitch","source":"Rapport 2","type":"One-off","family":"A - SF","pillar":"Norge + Native","track":"Brand/Investor","platform":"TikTok + X","canFilm":"Delvis","requiresSf":"Delvis","priority":"Sterk","timing":"usa","channel":"oskar"},
+      {"id":"R2-7","title":"The 24-Hour Product Decision","source":"Rapport 2","type":"One-off","family":"A - SF","pillar":"Native","track":"Investor","platform":"LinkedIn + TikTok","canFilm":"Delvis","requiresSf":"Nei","priority":"Vurder","timing":"for","channel":"native"},
+      {"id":"R2-9","title":"I Made You Something Free","source":"Rapport 2","type":"Serie","family":"B - Kunde","pillar":"Native","track":"Kunde/Brand","platform":"TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"begge"},
+      {"id":"R2-10","title":"Owner Presses The Button","source":"Rapport 2","type":"One-off/Serie","family":"B - Kunde","pillar":"Native","track":"Kunde","platform":"TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"native"},
+      {"id":"R2-11","title":"The Tone Test","source":"Rapport 2","type":"One-off","family":"B - Kunde","pillar":"Native","track":"Kunde","platform":"TikTok + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"native"},
+      {"id":"R2-12","title":"Before/After Feed Wall","source":"Rapport 2","type":"Serie","family":"B - Kunde","pillar":"Native","track":"Kunde","platform":"TikTok + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk","timing":"for","channel":"native"},
+      {"id":"R2-13","title":"Founder Proof Friday","source":"Rapport 2","type":"Serie","family":"C - Bevis","pillar":"Native","track":"Investor","platform":"LinkedIn + X","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk","timing":"for","channel":"native"},
+      {"id":"R2-14","title":"The $45k AI Bill On Screen","source":"Rapport 2","type":"One-off","family":"C - Bevis","pillar":"Native + AI","track":"Investor/Kunde","platform":"TikTok + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"native"},
+      {"id":"R2-15","title":"Kill The Feature Live","source":"Rapport 2","type":"One-off","family":"C - Bevis","pillar":"Native","track":"Investor","platform":"LinkedIn + TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk","timing":"for","channel":"native"},
+      {"id":"R2-16","title":"Customer Call, No Camera On Customer","source":"Rapport 2","type":"One-off/Serie","family":"C - Bevis","pillar":"Native","track":"Investor/Kunde","platform":"LinkedIn + TikTok","canFilm":"Delvis","requiresSf":"Nei","priority":"Vurder","timing":"for","channel":"native"},
+      {"id":"X-2","title":"7 Products, One Afternoon Of Content","source":"X-repost","type":"One-off","family":"X - Repost","pillar":"Native","track":"Brand/Investor","platform":"X","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"begge"},
+      {"id":"X-4","title":"Can Native Do A Health Brand Without Making It Cringe?","source":"X-repost","type":"One-off","family":"X - Repost","pillar":"Native","track":"Brand/Investor","platform":"X + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk","timing":"for","channel":"native"},
+      {"id":"X-6","title":"Native vs Founder Rules","source":"X-repost","type":"Serie","family":"X - Repost","pillar":"Native","track":"Brand/Investor","platform":"X + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk","timing":"for","channel":"begge"},
+      {"id":"USA-1","title":"Norway Team Travel Copy","source":"USA-plan","type":"One-off","family":"Travel/Brand","pillar":"Norge + USA","track":"Brand","platform":"TikTok + X","canFilm":"Ja","requiresSf":"Delvis","priority":"Film nå","timing":"tur","channel":"oskar"},
+      {"id":"USA-2","title":"Day X/90 Building Native In America","source":"USA-plan","type":"Serie","family":"USA-logg","pillar":"Native + USA","track":"Brand/Investor","platform":"TikTok + X","canFilm":"Ja","requiresSf":"Ja","priority":"Film nå","timing":"usa","channel":"begge"},
+      {"id":"USA-3","title":"Norwegian Tests American Business Culture","source":"USA-plan","type":"Serie","family":"USA-logg","pillar":"Norge + USA","track":"Brand","platform":"TikTok","canFilm":"Ja","requiresSf":"Ja","priority":"Film nå","timing":"usa","channel":"oskar"},
+      {"id":"USA-4","title":"SMB Before/After Native In The US","source":"USA-plan","type":"Serie","family":"Kunde-proof","pillar":"Native","track":"Kunde","platform":"TikTok + LinkedIn","canFilm":"Ja","requiresSf":"Ja","priority":"Film nå","timing":"usa","channel":"native"},
+      {"id":"USA-5","title":"Milestone As Customer Proof","source":"USA-plan","type":"Serie","family":"Founder proof","pillar":"Native","track":"Investor/Kunde","platform":"LinkedIn + X","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk","timing":"for","channel":"native"},
+      {"id":"USA-6","title":"Norwegian Tries To Sell To Americans","source":"USA-plan","type":"Serie","family":"USA-salg","pillar":"Native + USA","track":"Brand/Kunde","platform":"TikTok + X","canFilm":"Ja","requiresSf":"Ja","priority":"Film nå","timing":"usa","channel":"begge"},
+      {"id":"USA-7","title":"Public Bet: Native US Growth","source":"USA-plan","type":"One-off/Serie","family":"Founder proof","pillar":"Native","track":"Brand/Investor","platform":"X + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk","timing":"for","channel":"begge"},
+      {"id":"USA-8","title":"Drop A US Business In The Comments","source":"USA-plan","type":"Serie","family":"Kunde-proof","pillar":"Native","track":"Kunde/Brand","platform":"TikTok + X","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"begge"},
+      {"id":"USA-9","title":"ChatGPT vs Native Side By Side","source":"USA-plan","type":"Serie","family":"Product proof","pillar":"Native + AI","track":"Kunde","platform":"TikTok + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"native"},
+      {"id":"USA-10","title":"Spot The AI","source":"USA-plan","type":"Serie","family":"Product proof","pillar":"Native + AI","track":"Brand/Kunde","platform":"TikTok + X","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"begge"},
+      {"id":"USA-11","title":"Norwegian To English Rebuild","source":"USA-plan","type":"Serie","family":"Product proof","pillar":"Native","track":"Kunde/Brand","platform":"TikTok + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk","timing":"for","channel":"native"},
+      {"id":"USA-12","title":"Niche Edit Compilation","source":"USA-plan","type":"Serie","family":"Social proof","pillar":"Oskar","track":"Brand","platform":"TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Vurder","timing":"for","channel":"oskar"},
+      {"id":"USA-13","title":"Europe Is Where Businesses Go To Die","source":"USA-plan","type":"One-off","family":"Rage bait","pillar":"Norge + USA","track":"Brand","platform":"X + TikTok","canFilm":"Ja","requiresSf":"Ja","priority":"Vurder","timing":"usa","channel":"oskar","risk":"Høy"},
+      {"id":"USA-14","title":"Skattesmell Founder Lesson","source":"USA-plan","type":"One-off","family":"Founder reality","pillar":"Oskar","track":"Brand/Investor","platform":"TikTok + X","canFilm":"Ja","requiresSf":"Nei","priority":"Vurder","timing":"for","channel":"oskar"},
+      {"id":"USA-15","title":"Travel Vlog Niche: Robin Hood / Onkel Skrue","source":"USA-plan","type":"Serie","family":"Travel/Brand","pillar":"Oskar","track":"Brand","platform":"TikTok","canFilm":"Ja","requiresSf":"Delvis","priority":"Vurder","timing":"tur","channel":"oskar"},
+      {"id":"USA-16","title":"Handle Til Koderne","source":"USA-plan","type":"One-off/Serie","family":"Behind the scenes","pillar":"Team","track":"Brand","platform":"TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"oskar"}
 	    ];
 
     const briefs = {
@@ -1500,6 +1717,398 @@
 	        ],
 	        next: "Test X-8 først. Bruk Norgeskamp-versjonen når live-demoen sitter teknisk."
 	      },
+      "USA-1": {
+        concept: "Kopier landslagets reiseenergi: trapp, viking, avreise, men gjør det til Oskar/Native som drar ut for å bygge.",
+        context: [
+          "Reiseformat som folk skjønner uten forklaring.",
+          "Bruk Norge-symbolikk som kontrast til USA-ambisjon."
+        ],
+        say: [
+          "Norge sender landslaget. Jeg sender Native.",
+          "Dette er ikke ferie. Dette er 90 dager med salg, demoer og bygging."
+        ],
+        make: [
+          "Film avreise/trapp/flyplass med tydelig Native/PC-signal.",
+          "Klipp raskt: pakking -> PC -> første mål på skjerm.",
+          "Ikke la flyplassen være hele posten. Avslutt på konkret mål."
+        ],
+        hooks: [
+          "Norway has a national team. I have a startup and a laptop.",
+          "90 days. One product. America next."
+        ],
+        real: [
+          "Faktisk reisedag eller ekte prepdag.",
+          "Målet for turen må være konkret."
+        ],
+        next: "Film som intro til USA-perioden når reisen starter."
+      },
+      "USA-2": {
+        concept: "Dag X/90-teller som dokumenterer ett bevis per dag fra USA-perioden.",
+        context: [
+          "Fast serie som gjør reisen lett å følge.",
+          "Teller fungerer bare hvis hver episode har ett konkret proof."
+        ],
+        say: [
+          "Dag X av 90.",
+          "I dag lærte vi én ting om å selge Native i USA.",
+          "Dette endrer vi i morgen."
+        ],
+        make: [
+          "Start hver video med stor teller: Day X/90.",
+          "Vis ett bevis: demo, tall, avslag, kunde, produktendring.",
+          "Lukk med neste handling."
+        ],
+        hooks: [
+          "Day 7/90 building Native in America.",
+          "One proof per day until this either works or breaks."
+        ],
+        real: [
+          "Dagnummer må stemme.",
+          "Hver episode må ha ett ekte datapunkt."
+        ],
+        next: "Lag enkel tracker før avreise."
+      },
+      "USA-3": {
+        concept: "Nordmann tester amerikanske business-ting: BBQ, pickup, drill, service, dørbanking, og kobler det til salg/ambisjon.",
+        context: [
+          "Dette er Oskar-kanal: observasjon, humor og kulturkontrast.",
+          "Native må være B-story, ikke fraværende."
+        ],
+        say: [
+          "Dette ser dumt ut i Norge. Her er det normalt.",
+          "Hvis folk bygger så fysisk her, må vi selge så fysisk også."
+        ],
+        make: [
+          "Film én amerikansk ting per episode.",
+          "Koble observasjonen til én konkret Native-læring.",
+          "Hold det lett, men ikke turist."
+        ],
+        hooks: [
+          "A Norwegian trying to understand American business culture.",
+          "This would be cringe in Norway. Here it is normal."
+        ],
+        real: [
+          "Må filmes i ekte situasjon.",
+          "Ikke gjør narr av folk. Gjør kontrasten om Oskar."
+        ],
+        next: "Samle 5 mulige scener første uke i USA."
+      },
+      "USA-4": {
+        concept: "Finn en amerikansk SMB med håpløs eller tom sosial feed og vis før/etter Native-output.",
+        context: [
+          "Kundebevis for Native-kanalen.",
+          "Før/etter må handle om produkt, ikke ydmyke businessen."
+        ],
+        say: [
+          "Denne businessen har en bra website, men feeden gjør ikke jobben.",
+          "Jeg kjørte websiden gjennom Native. Dette er før og etter."
+        ],
+        make: [
+          "Vis website, gammel feed, Native-output.",
+          "Bruk side-by-side med 3 poster.",
+          "Avslutt med om eier ville brukt det."
+        ],
+        hooks: [
+          "Their website is good. Their social feed is not.",
+          "Website in. A usable content calendar out."
+        ],
+        real: [
+          "Samtykke hvis business identifiseres.",
+          "Ikke kall noen håpløs på en måte som henger dem ut."
+        ],
+        next: "Bruk første USA-SMB som sier ja til å vises."
+      },
+      "USA-5": {
+        concept: "Reframe kundetall/ARR/milepæler som kundebevis, ikke founder-flex.",
+        context: [
+          "Native-kanalen: seriøs, corporate, investor/kunde-proof.",
+          "Bruk 2000/5000/10000 kunder bare når tallene stemmer."
+        ],
+        say: [
+          "Dette tallet er ikke flex. Det er et stress-test-resultat.",
+          "X kunder betyr Y edge cases Native nå håndterer."
+        ],
+        make: [
+          "Vis tallet stort, så 3 ting tallet beviser.",
+          "Knytt milepæl til produktkvalitet eller kundeverdi."
+        ],
+        hooks: [
+          "2000 customers is not the point. What broke is.",
+          "This milestone forced Native to grow up."
+        ],
+        real: [
+          "Tall må være korrekt på publiseringsdagen.",
+          "Ikke del ARR hvis det ikke skal deles."
+        ],
+        next: "Bruk neste ekte milepæl."
+      },
+      "USA-6": {
+        concept: "Norwegian tries to sell to Americans: Oskar banker dører, går inn med laptop, eller prøver truck/door-to-door-energi.",
+        context: [
+          "Oskar-kanal, fysisk salg, høy friksjon.",
+          "Må vise salgsforsøk, ikke bare bil/truck."
+        ],
+        say: [
+          "I Norge hadde dette vært for mye. I USA er det tirsdag.",
+          "Jeg skal prøve å selge Native fysisk."
+        ],
+        make: [
+          "Film prep -> dør/område -> pitch -> reaksjon -> læring.",
+          "Hold kamera på Oskar og ekte friksjon."
+        ],
+        hooks: [
+          "A Norwegian trying to sell to Americans.",
+          "I tried door-to-door SaaS sales in America."
+        ],
+        real: [
+          "Ikke film privatpersoner uten samtykke.",
+          "Ikke fake dørbanking eller reaksjoner."
+        ],
+        next: "Bruk etter første uke når Oskar har lokasjon og pitch."
+      },
+      "USA-7": {
+        concept: "Offentlig veddemål: sett et konkret USA-mål og la publikum følge om det lykkes.",
+        context: [
+          "Kan gå på begge kanaler hvis målet er seriøst nok.",
+          "Må være målbart og ærlig."
+        ],
+        say: [
+          "Jeg setter dette målet offentlig fordi ellers blir det for lett å gjemme seg.",
+          "Målet er X innen dato Y."
+        ],
+        make: [
+          "Vis mål, dato, scoreboard og konsekvens.",
+          "Oppdater ukentlig med ekte status."
+        ],
+        hooks: [
+          "Public bet: X by Y date.",
+          "If we miss this, I will show exactly why."
+        ],
+        real: [
+          "Målet må være realistisk og målbart.",
+          "Ikke lag konsekvens som blir cringe eller utrygg."
+        ],
+        next: "Velg ett tall og én dato før publisering."
+      },
+      "USA-8": {
+        concept: "Be publikum droppe amerikanske businesser i kommentarfeltet. Oskar kjører dem gjennom Native i neste video.",
+        context: [
+          "Kommentarformat for pipeline og engasjement.",
+          "Må levere på kommentarene, ellers dør formatet."
+        ],
+        say: [
+          "Drop a US business in the comments.",
+          "I will run one through Native and show the result."
+        ],
+        make: [
+          "Åpne med call-to-action.",
+          "Neste episode viser valgt kommentar, website og output.",
+          "Gi ærlig score."
+        ],
+        hooks: [
+          "Drop a US business. I will make their content.",
+          "Comment a company that needs better social posts."
+        ],
+        real: [
+          "Bruk kun offentlige websites.",
+          "Ikke påstå at businessen er kunde."
+        ],
+        next: "Start før avreise for å bygge liste."
+      },
+      "USA-9": {
+        concept: "Side-by-side: samme website inn i ChatGPT vs Native, og vis forskjellen i output.",
+        context: [
+          "Native-kanal: klar produktdifferensiering.",
+          "Må være fair test, ikke strawman-prompt."
+        ],
+        say: [
+          "Samme website. Samme mål. ChatGPT til venstre, Native til høyre.",
+          "Forskjellen er ikke AI. Forskjellen er workflow og kontekst."
+        ],
+        make: [
+          "Vis prompt/URL, outputs, 3 sjekkpunkter.",
+          "Hold testen kort og lesbar."
+        ],
+        hooks: [
+          "ChatGPT vs Native on the same business.",
+          "Same website. Very different output."
+        ],
+        real: [
+          "ChatGPT-testen må være fair.",
+          "Ikke manipuler output etterpå."
+        ],
+        next: "Velg én tydelig SMB eller founder-site."
+      },
+      "USA-10": {
+        concept: "Spot the AI: vis to posts og la publikum gjette hvilken som er Native.",
+        context: [
+          "Begge-kanal: interaktivt, enkelt og produktnært.",
+          "Fungerer best når forskjellen ikke er åpenbar."
+        ],
+        say: [
+          "One is written by a human. One is Native.",
+          "Can you spot the AI?"
+        ],
+        make: [
+          "Vis A/B-posts på skjerm.",
+          "Avslør i neste klipp eller kommentar.",
+          "Knytt tilbake til website-input."
+        ],
+        hooks: [
+          "Can you spot the AI?",
+          "One post is human. One is Native."
+        ],
+        real: [
+          "Må være fair og ikke misvisende.",
+          "Avslør tydelig hva som er hva."
+        ],
+        next: "Lag med ekte kunde/output."
+      },
+      "USA-11": {
+        concept: "Reproduser en norsk vinnerpost på engelsk og vis hvordan Native tilpasser den til US-tone.",
+        context: [
+          "Produktbevis for internasjonalisering.",
+          "Må ikke bare oversette ordrett."
+        ],
+        say: [
+          "Denne posten fungerte i Norge. Men direkte oversatt dør den i USA.",
+          "Her er Native-versjonen på engelsk."
+        ],
+        make: [
+          "Vis norsk original, dårlig direkte oversettelse, Native US-versjon.",
+          "Marker hva som endres: hook, proof, tone."
+        ],
+        hooks: [
+          "Norwegian post to US post. Not translation. Rebuild.",
+          "This worked in Norway. Would it work in America?"
+        ],
+        real: [
+          "Bruk faktisk norsk post som fungerte.",
+          "Ikke påstå US-resultat før det er testet."
+        ],
+        next: "Velg 3 norske posts med best historikk."
+      },
+      "USA-12": {
+        concept: "Niche edit-compilation: raske klipp av små businesser/nicher Native kan lage innhold for.",
+        context: [
+          "Oskar-kanal / social format.",
+          "Må ha tempo og tydelige eksempler."
+        ],
+        say: [
+          "Her er 10 nicher jeg tror Native kan vinne.",
+          "Jeg tester én av dem i morgen."
+        ],
+        make: [
+          "Klipp 8-10 nisjer raskt med ett output-eksempel hver.",
+          "Avslutt med poll/comment choice."
+        ],
+        hooks: [
+          "10 boring businesses that should post more.",
+          "Which niche should Native attack first?"
+        ],
+        real: [
+          "Output må komme fra ekte eller realistiske websites.",
+          "Ikke bruk private data."
+        ],
+        next: "Lag compilation fra eksisterende demo-output."
+      },
+      "USA-13": {
+        concept: "Rage bait-tese: Europe is where businesses go to die. Bruk som diskusjonsstarter om ambisjon og salg.",
+        context: [
+          "Oskar-kanal, høy risiko/høy oppmerksomhet.",
+          "Må inneholde faktisk poeng, ikke bare provokasjon."
+        ],
+        say: [
+          "Europe is where businesses go to die. That is harsh, but here is what I mean.",
+          "In America, ambition is default. In Norway, you explain yourself first."
+        ],
+        make: [
+          "Åpne med hard tese.",
+          "Gi 2 konkrete kontraster.",
+          "Knytt til Native sin USA-satsing."
+        ],
+        hooks: [
+          "Europe is where businesses go to die.",
+          "This sentence annoys people. It also explains why I am going to the US."
+        ],
+        real: [
+          "Må være Oskars faktiske mening eller tydelig spissformulering.",
+          "Ikke publiser uten å tåle motreaksjon."
+        ],
+        next: "Bruk først når USA-observasjonene finnes."
+      },
+      "USA-14": {
+        concept: "Skattesmell som founder-reality: hva som skjer når vekst møter system, cashflow og dårlige antakelser.",
+        context: [
+          "Oskar-kanal: smerte, ærlighet, bak kulissene.",
+          "Må ikke bli finansiell rådgivning."
+        ],
+        say: [
+          "Dette er delen av vekst folk ikke poster.",
+          "Vi vokste, og så kom regningen."
+        ],
+        make: [
+          "Forklar ett konkret problem på tavle/skjerm.",
+          "Vis hva som endres i rutiner eller økonomistyring."
+        ],
+        hooks: [
+          "The tax part of building is not sexy. It is real.",
+          "Growth gave us a bill we had to learn from."
+        ],
+        real: [
+          "Ikke del sensitive tall hvis de ikke skal deles.",
+          "Ikke gi skatteråd."
+        ],
+        next: "Bruk bare hvis Oskar vil være åpen om læringen."
+      },
+      "USA-15": {
+        concept: "Reise-vlogg med nisje-vinkel: Robin Hood / Onkel Skrue som lett, gjenkjennelig framing på penger, reise og bygging.",
+        context: [
+          "Oskar-kanal. Personlighet og reise, men må kobles til bygging.",
+          "Kan være recurring B-roll-format."
+        ],
+        say: [
+          "Dette er ikke vanlig travel vlog. Det er startup med jetlag.",
+          "Onkel Skrue ville forstått denne turen."
+        ],
+        make: [
+          "Reiseklipp + én konkret Native-handling.",
+          "Bruk figuren som humor, ikke hele poenget."
+        ],
+        hooks: [
+          "Startup travel vlog, but make it Onkel Skrue.",
+          "Robin Hood, but the loot is customer feedback."
+        ],
+        real: [
+          "Ikke la reisen bli hele posten.",
+          "Må ha én ekte arbeids-/byggehandling."
+        ],
+        next: "Test én kort episode på reisedagen."
+      },
+      "USA-16": {
+        concept: "Handle mat/pils/energi til koderne: behind-the-scenes av teamet som faktisk bygger.",
+        context: [
+          "Oskar-kanal. Menneskelig og lett, men ikke hovedkanal for Native.",
+          "Bra som lavterskel BTS mellom tyngre bevisposter."
+        ],
+        say: [
+          "Koderne bygger. Jeg handler.",
+          "Dette er også founder-jobb noen dager."
+        ],
+        make: [
+          "Film handlekurv, kontor/team, kort status på hva de bygger.",
+          "Hold det uformelt og kort."
+        ],
+        hooks: [
+          "Founder job today: feed the people shipping the product.",
+          "They code. I bring supplies."
+        ],
+        real: [
+          "Ikke film teamet uten samtykke.",
+          "Ikke gjør alkohol til poenget."
+        ],
+        next: "Film neste lange kodekveld."
+      },
 	      "X-1": {
 	        concept: "Episode 1 i Native vs Founder Rules: kjør shipfa.st gjennom Native og score om outputen matcher Marc Lous enkle X-regler.",
 	        context: [
@@ -1680,27 +2289,87 @@
 	    const FILTERS_STORAGE_KEY = "oskarContentFiltersUltraV1";
 	    const SELECTED_STORAGE_KEY = "oskarSelectedIdeasUltraV1";
 	    const ORDER_STORAGE_KEY = "oskarIdeaOrderV2";
+	    const LOCAL_IDEAS_STORAGE_KEY = "oskarLocalIdeasV1";
+	    const LOCAL_OVERRIDES_STORAGE_KEY = "oskarLocalIdeaOverridesV1";
+	    const LOCAL_REMOVED_STORAGE_KEY = "oskarLocalRemovedIdeasV1";
 	    const TEAM_BASE_URL = "https://kodskar.github.io/oskar-content-dashboard-team/";
-	    const visibleIdeaIds = ideas.filter(idea => idea.priority === "Film nå").map(idea => idea.id);
-	    const defaultOrder = {
-	      next: visibleIdeaIds.slice(0, 6),
-	      later: visibleIdeaIds.slice(6)
-	    };
+	    const TIMING_OPTIONS = [
+	      { id: "for", title: "🇳🇴 Før reise", short: "Før reise" },
+	      { id: "tur", title: "✈️ På turen", short: "På turen" },
+	      { id: "usa", title: "🇺🇸 I USA", short: "I USA" }
+	    ];
+	    const CHANNEL_OPTIONS = [
+	      { id: "native", label: "Native" },
+	      { id: "oskar", label: "Oskar" },
+	      { id: "begge", label: "Begge" }
+	    ];
 	    const savedFilters = JSON.parse(localStorage.getItem(FILTERS_STORAGE_KEY) || "{}");
 	    const filters = {
 	      search: "",
+	      channel: "alle",
 	      ...savedFilters
 	    };
 	    let selectedIds = new Set(JSON.parse(localStorage.getItem(SELECTED_STORAGE_KEY) || "[]"));
+	    let localIdeas = JSON.parse(localStorage.getItem(LOCAL_IDEAS_STORAGE_KEY) || "[]");
+	    let localOverrides = JSON.parse(localStorage.getItem(LOCAL_OVERRIDES_STORAGE_KEY) || "{}");
+	    let removedIds = new Set(JSON.parse(localStorage.getItem(LOCAL_REMOVED_STORAGE_KEY) || "[]"));
 	    let sharedOrder = parseSharedOrder();
-	    let activeOrder = normalizeOrder(sharedOrder || JSON.parse(localStorage.getItem(ORDER_STORAGE_KEY) || "null") || defaultOrder);
+	    let activeOrder = normalizeOrder(sharedOrder || JSON.parse(localStorage.getItem(ORDER_STORAGE_KEY) || "null") || defaultOrder());
 	    let hasSharedOrder = Boolean(sharedOrder);
 	    let draggedId = null;
 	    let currentIdeaId = null;
+	    let editMode = false;
 
 	    function bucketLabel(idea) {
-	      if (idea.priority === "Film nå") return "Ideer";
-	      return "Idébank";
+	      return "Ideer";
+	    }
+
+	    function saveLocalState() {
+	      localStorage.setItem(LOCAL_IDEAS_STORAGE_KEY, JSON.stringify(localIdeas));
+	      localStorage.setItem(LOCAL_OVERRIDES_STORAGE_KEY, JSON.stringify(localOverrides));
+	      localStorage.setItem(LOCAL_REMOVED_STORAGE_KEY, JSON.stringify([...removedIds]));
+	    }
+
+	    function currentIdeas() {
+	      return [...ideas, ...localIdeas]
+	        .filter(idea => !removedIds.has(idea.id))
+	        .map(idea => ({ ...idea, ...(localOverrides[idea.id] || {}) }));
+	    }
+
+	    function timingLabel(value) {
+	      return (TIMING_OPTIONS.find(option => option.id === value) || TIMING_OPTIONS[0]).short;
+	    }
+
+	    function channelLabel(value) {
+	      return (CHANNEL_OPTIONS.find(option => option.id === value) || CHANNEL_OPTIONS[2]).label;
+	    }
+
+	    function briefFor(idea) {
+	      const base = briefs[idea.id];
+	      if (base) return idea.localBrief ? { ...base, concept: idea.localBrief } : base;
+	      if (!idea.localBrief) return null;
+	      return {
+	        concept: idea.localBrief,
+	        make: ["Fyll ut hook, scene, eier og proof før ideen publiseres."],
+	        hooks: [],
+	        real: ["Ideen må reviewes før filming."],
+	        next: "Hvis teamet liker ideen: lim JS-snutt inn i ideas-arrayet og skriv full brief."
+	      };
+	    }
+
+	    function visibleIdeaIds() {
+	      return currentIdeas().map(idea => idea.id);
+	    }
+
+	    function defaultOrder() {
+	      const allIds = visibleIdeaIds();
+	      const next = currentIdeas()
+	        .filter(idea => idea.priority === "Film nå")
+	        .map(idea => idea.id);
+	      return {
+	        next,
+	        later: allIds.filter(id => !next.includes(id))
+	      };
 	    }
 
 	    function parseIdList(value) {
@@ -1721,7 +2390,8 @@
 	    }
 
 	    function normalizeOrder(order) {
-	      const valid = new Set(visibleIdeaIds);
+	      const allIds = visibleIdeaIds();
+	      const valid = new Set(allIds);
 	      const used = new Set();
 	      const normalizeList = list => (Array.isArray(list) ? list : [])
 	        .filter(id => valid.has(id) && !used.has(id))
@@ -1731,7 +2401,7 @@
 	        });
 	      const next = normalizeList(order.next);
 	      const later = normalizeList(order.later);
-	      visibleIdeaIds.forEach(id => {
+	      allIds.forEach(id => {
 	        if (!used.has(id)) later.push(id);
 	      });
 	      return { next, later };
@@ -1742,11 +2412,17 @@
 	    }
 
 	    function ideaById(id) {
-	      return ideas.find(idea => idea.id === id);
+	      return currentIdeas().find(idea => idea.id === id);
 	    }
 
 	    function orderedIdeas(laneId) {
 	      return activeOrder[laneId].map(ideaById).filter(Boolean);
+	    }
+
+	    function laneOf(id) {
+	      if (activeOrder.next.includes(id)) return "next";
+	      if (activeOrder.later.includes(id)) return "later";
+	      return "later";
 	    }
 
 	    function rankMap() {
@@ -1756,16 +2432,25 @@
 	    }
 
 	    function matchesFilters(idea) {
-	      const brief = briefs[idea.id] || {};
+	      const brief = briefFor(idea) || {};
 	      const briefText = [brief.concept, brief.context, brief.say, brief.make, brief.hooks, brief.real, brief.targets, brief.cut, brief.next].flat().filter(Boolean).join(" ");
-	      const haystack = [idea.id, idea.title, idea.source, idea.type, idea.family, idea.pillar, idea.track, idea.platform, idea.priority, idea.canFilm, idea.requiresSf, briefText].join(" ").toLowerCase();
-	      return !filters.search || haystack.includes(filters.search.toLowerCase());
+	      const haystack = [idea.id, idea.title, idea.source, idea.type, idea.family, idea.pillar, idea.track, idea.platform, idea.priority, idea.canFilm, idea.requiresSf, idea.timing, timingLabel(idea.timing), idea.channel, channelLabel(idea.channel), briefText].join(" ").toLowerCase();
+	      const matchesSearch = !filters.search || haystack.includes(filters.search.toLowerCase());
+	      const matchesChannel = filters.channel === "alle" || idea.channel === filters.channel || idea.channel === "begge";
+	      return matchesSearch && matchesChannel;
 	    }
 
 	    function makeToolbar(targetId) {
 	      const target = document.getElementById(targetId);
 	      target.innerHTML = `
 	        <input aria-label="Søk" placeholder="Søk i ideer..." data-filter="search">
+	        <div class="channel-filter" aria-label="Kanalfilter">
+	          <button type="button" data-channel-filter="alle">Alle</button>
+	          <button type="button" data-channel-filter="native">Native</button>
+	          <button type="button" data-channel-filter="oskar">Oskar</button>
+	        </div>
+	        <button class="ghost-btn" id="addIdea" type="button">Legg til idé</button>
+	        <button class="ghost-btn" id="toggleEditMode" type="button">Rediger av</button>
 	        <button class="ghost-btn" id="copyTeamLink" type="button">Kopier teamlenke</button>
 	        <button class="ghost-btn" id="resetOrder" type="button">Tilbakestill rekkefølge</button>
 	      `;
@@ -1773,9 +2458,27 @@
 	        control.value = filters.search || "";
 	        control.addEventListener("input", event => {
 	          filters[event.target.dataset.filter] = event.target.value;
-	          localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify({ search: filters.search }));
+	          localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify({ search: filters.search, channel: filters.channel }));
 	          renderAll();
 	        });
+	      });
+	      target.querySelectorAll("[data-channel-filter]").forEach(button => {
+	        button.classList.toggle("active", button.dataset.channelFilter === filters.channel);
+	        button.addEventListener("click", event => {
+	          filters.channel = event.currentTarget.dataset.channelFilter;
+	          target.querySelectorAll("[data-channel-filter]").forEach(item => {
+	            item.classList.toggle("active", item.dataset.channelFilter === filters.channel);
+	          });
+	          localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify({ search: filters.search, channel: filters.channel }));
+	          renderAll();
+	        });
+	      });
+	      document.getElementById("addIdea").addEventListener("click", () => openIdeaForm());
+	      document.getElementById("toggleEditMode").addEventListener("click", () => {
+	        editMode = !editMode;
+	        document.getElementById("toggleEditMode").textContent = editMode ? "Rediger på" : "Rediger av";
+	        document.getElementById("toggleEditMode").classList.toggle("active", editMode);
+	        renderAll();
 	      });
 	      document.getElementById("copyTeamLink").addEventListener("click", copyTeamLink);
 	      document.getElementById("resetOrder").addEventListener("click", resetOrder);
@@ -1804,7 +2507,7 @@
 	    }
 
 	    function resetOrder() {
-	      activeOrder = normalizeOrder(defaultOrder);
+	      activeOrder = normalizeOrder(defaultOrder());
 	      hasSharedOrder = false;
 	      saveOrder();
 	      renderAll();
@@ -1820,22 +2523,26 @@
 
 	    function cardHtml(idea, options = {}) {
 	      const selected = selectedIds.has(idea.id);
-	      const brief = briefs[idea.id] || {};
+	      const brief = briefFor(idea) || {};
 	      const concept = brief.concept || `${idea.pillar} / ${idea.track}`;
 	      const sortable = Boolean(options.sortable);
 	      const rank = options.rank ? `<span class="rank">${options.rank}</span>` : "";
 	      const dragHandle = sortable ? `<span class="drag-hint" aria-hidden="true">↕</span>` : "";
+	      const timingAttr = options.timing ? `data-timing="${options.timing}"` : "";
+	      const channelName = channelLabel(idea.channel);
+	      const riskBadge = idea.risk ? `<span class="risk-badge">Risiko</span>` : "";
+	      const editControls = editMode ? `<button type="button" class="tiny-btn" data-edit="${idea.id}">Endre</button><button type="button" class="tiny-btn" data-remove="${idea.id}">Fjern</button>` : "";
 	      const moveControls = sortable ? `
 	        <button type="button" class="move-btn" data-move="${idea.id}" data-direction="-1" aria-label="Flytt opp">↑</button>
 	        <button type="button" class="move-btn" data-move="${idea.id}" data-direction="1" aria-label="Flytt ned">↓</button>
 	      ` : "";
 	      return `
-	        <article class="idea-card ${selected ? "selected" : ""}" data-id="${idea.id}" ${options.laneId ? `data-lane="${options.laneId}"` : ""} ${sortable ? `draggable="true"` : ""} role="button" tabindex="0">
+	        <article class="idea-card ${selected ? "selected" : ""}" data-id="${idea.id}" ${options.laneId ? `data-lane="${options.laneId}"` : ""} ${timingAttr} ${sortable ? `draggable="true"` : ""} role="button" tabindex="0">
 	          <div class="card-top">
-	            <span class="card-meta">${rank}<span class="id">${idea.id}</span>${dragHandle}</span>
-	            <span class="card-actions">${moveControls}<button type="button" class="quick-select ${selected ? "on" : ""}" data-select="${idea.id}" aria-pressed="${selected ? "true" : "false"}">${selected ? "Valgt" : "+ Velg"}</button></span>
+	            <span class="card-meta">${rank}<span class="id">${idea.id}</span><span class="channel-badge channel-${idea.channel}">${channelName}</span>${riskBadge}${dragHandle}</span>
+	            <span class="card-actions">${moveControls}${editControls}<button type="button" class="quick-select ${selected ? "on" : ""}" data-select="${idea.id}" aria-pressed="${selected ? "true" : "false"}">${selected ? "Valgt" : "+ Velg"}</button></span>
 	          </div>
-	          <h4>${idea.title}</h4>
+	          <h4>${escapeHtml(idea.title)}</h4>
 	          <p class="concept">${escapeHtml(concept)}</p>
 	          <span class="open-brief">Klikk for brief</span>
 	        </article>
@@ -1862,7 +2569,7 @@
     }
 
     function briefText(idea) {
-      const brief = briefs[idea.id];
+      const brief = briefFor(idea);
       if (!brief) return `${idea.id} - ${idea.title}`;
       const sections = [
         ["Hvem dette er:", brief.context],
@@ -1876,6 +2583,8 @@
       return [
         `${idea.id} - ${idea.title}`,
         `Prioritet: ${idea.priority}`,
+        `Tid: ${timingLabel(idea.timing)}`,
+        `Kanal: ${channelLabel(idea.channel)}`,
         `Plattform: ${idea.platform}`,
         `Pilar/spor: ${idea.pillar} / ${idea.track}`,
         "",
@@ -1949,7 +2658,22 @@
 	      renderAll();
 	    }
 
-	    function moveDraggedIdea(id, targetLane, beforeId = null) {
+	    function setIdeaMeta(id, fields) {
+	      const localIndex = localIdeas.findIndex(idea => idea.id === id);
+	      if (localIndex >= 0) {
+	        localIdeas[localIndex] = { ...localIdeas[localIndex], ...fields };
+	      } else {
+	        localOverrides[id] = { ...(localOverrides[id] || {}), ...fields };
+	      }
+	    }
+
+	    function updateIdeaMeta(id, fields) {
+	      setIdeaMeta(id, fields);
+	      saveLocalState();
+	      renderAll();
+	    }
+
+	    function moveDraggedIdea(id, targetLane, beforeId = null, targetTiming = null) {
 	      if (!id || !targetLane || !activeOrder[targetLane]) return;
 	      activeOrder.next = activeOrder.next.filter(item => item !== id);
 	      activeOrder.later = activeOrder.later.filter(item => item !== id);
@@ -1960,45 +2684,68 @@
 	      } else {
 	        targetList.push(id);
 	      }
+	      if (targetTiming) setIdeaMeta(id, { timing: targetTiming });
 	      hasSharedOrder = false;
+	      saveLocalState();
 	      saveOrder();
 	      renderAll();
 	    }
 
 	    function renderFunnel() {
-	      const filtered = ideas.filter(matchesFilters);
 	      const ranks = rankMap();
 	      const laneConfig = [
 	        { id: "next", title: "Neste opp", hint: "Det teamet bør filme først." },
 	        { id: "later", title: "Senere", hint: "Bra ideer som kan vente litt." }
 	      ];
-	      const laneMarkup = laneConfig.map(lane => {
-	        const laneIdeas = orderedIdeas(lane.id).filter(matchesFilters);
-	        const body = laneIdeas.length
-	          ? laneIdeas.map(idea => cardHtml(idea, { sortable: true, laneId: lane.id, rank: ranks.get(idea.id) })).join("")
-	          : `<div class="empty">Ingen ideer matcher søket</div>`;
-	        return `
-	          <div class="lane" data-lane="${lane.id}">
-	            <h3>${lane.title}<span>${laneIdeas.length}</span><span class="lane-hint">${lane.hint}</span></h3>
-	            <div class="lane-body" data-lane-body="${lane.id}">${body}</div>
+	      const sectionMarkup = TIMING_OPTIONS.map(time => {
+	        const visibleInTime = currentIdeas().filter(idea => idea.timing === time.id).filter(matchesFilters);
+	        const channelDropMarkup = CHANNEL_OPTIONS.map(channel => `
+	          <div class="channel-drop" data-channel-drop="${channel.id}" data-timing="${time.id}">Drop til ${channel.label}</div>
+	        `).join("");
+	        const flatTime = time.id === "tur";
+	        const lanes = flatTime ? `
+	          <div class="lane flat-lane">
+	            <h3>Reiseideer<span>${visibleInTime.length}</span><span class="lane-hint">Flat liste fordi reisen har få kort.</span></h3>
+	            <div class="lane-body" data-flat-body="${time.id}" data-timing="${time.id}">
+	              ${visibleInTime.length
+	                ? [...activeOrder.next, ...activeOrder.later]
+	                    .map(ideaById)
+	                    .filter(Boolean)
+	                    .filter(idea => idea.timing === time.id)
+	                    .filter(matchesFilters)
+	                    .map(idea => cardHtml(idea, { sortable: true, laneId: laneOf(idea.id), timing: time.id, rank: ranks.get(idea.id) }))
+	                    .join("")
+	                : `<div class="empty">Ingen ideer her</div>`}
+	            </div>
 	          </div>
+	        ` : laneConfig.map(lane => {
+	          const laneIdeas = orderedIdeas(lane.id)
+	            .filter(idea => idea.timing === time.id)
+	            .filter(matchesFilters);
+	          const body = laneIdeas.length
+	            ? laneIdeas.map(idea => cardHtml(idea, { sortable: true, laneId: lane.id, timing: time.id, rank: ranks.get(idea.id) })).join("")
+	            : `<div class="empty">Ingen ideer her</div>`;
+	          return `
+	            <div class="lane" data-lane="${lane.id}">
+	              <h3>${lane.title}<span>${laneIdeas.length}</span><span class="lane-hint">${lane.hint}</span></h3>
+	              <div class="lane-body" data-lane-body="${lane.id}" data-timing="${time.id}">${body}</div>
+	            </div>
+	          `;
+	        }).join("");
+	        return `
+	          <section class="time-section" data-time-section="${time.id}">
+	            <h3>${time.title}<span>${visibleInTime.length} ideer</span></h3>
+	            <div class="channel-dropbar">${channelDropMarkup}</div>
+	            <div class="time-grid ${flatTime ? "flat" : ""}">${lanes}</div>
+	          </section>
 	        `;
 	      }).join("");
-	      const backlogIdeas = filtered.filter(idea => idea.priority !== "Film nå");
-	      const backlogMarkup = `
-	        <details class="backlog">
-	          <summary>Idébank (klikk for å vise) <span>${backlogIdeas.length}</span></summary>
-	          <div class="backlog-grid">
-	            ${backlogIdeas.length ? backlogIdeas.map(cardHtml).join("") : `<div class="empty">Ingen backlog med valgt søk.</div>`}
-	          </div>
-	        </details>
-	      `;
-	      document.getElementById("funnelLanes").innerHTML = laneMarkup + backlogMarkup;
+	      document.getElementById("funnelLanes").innerHTML = sectionMarkup;
 	      document.getElementById("sharedOrderNote").classList.toggle("hidden", !hasSharedOrder);
 	    }
 
 	    function renderShootlist() {
-	      const selectedIdeas = ideas.filter(idea => selectedIds.has(idea.id));
+	      const selectedIdeas = currentIdeas().filter(idea => selectedIds.has(idea.id));
 	      document.querySelector(".shootlist").classList.toggle("is-empty", !selectedIdeas.length);
 	      document.getElementById("selectedCount").textContent = `${selectedIdeas.length} valgt`;
 	      document.getElementById("selectedIdeas").innerHTML = selectedIdeas.length
@@ -2007,16 +2754,19 @@
 	    }
 
 	    function openIdea(id) {
-      const idea = ideas.find(item => item.id === id);
+      const idea = ideaById(id);
       if (!idea) return;
       currentIdeaId = id;
       document.getElementById("modalId").textContent = idea.id;
 	      document.getElementById("modalTitle").textContent = idea.title;
 	      document.getElementById("modalTags").innerHTML = `
 	        <span class="tag">${bucketLabel(idea)}</span>
+	        <span class="tag">${timingLabel(idea.timing)}</span>
+	        <span class="channel-badge channel-${idea.channel}">${channelLabel(idea.channel)}</span>
+	        ${idea.risk ? `<span class="risk-badge">Risiko</span>` : ""}
 	      `;
-	      document.getElementById("modalStatus").textContent = idea.platform;
-	      const brief = briefs[idea.id] || {
+	      document.getElementById("modalStatus").textContent = `${idea.platform} · ${idea.type}`;
+	      const brief = briefFor(idea) || {
         concept: "Kort ide fra masterarket.",
         make: ["Fyll ut hook, scene, eier og proof for denne ideen."],
         hooks: [],
@@ -2038,13 +2788,133 @@
 	      document.getElementById("ideaDialog").showModal();
     }
 
+	    function generatedIdeaObject(idea) {
+	      const object = {
+	        id: idea.id,
+	        title: idea.title,
+	        source: idea.source,
+	        type: idea.type,
+	        family: idea.family,
+	        pillar: idea.pillar,
+	        track: idea.track,
+	        platform: idea.platform,
+	        canFilm: idea.canFilm,
+	        requiresSf: idea.requiresSf,
+	        priority: idea.priority,
+	        timing: idea.timing,
+	        channel: idea.channel
+	      };
+	      if (idea.localBrief) object.localBrief = idea.localBrief;
+	      if (idea.risk) object.risk = idea.risk;
+	      return `${JSON.stringify(object, null, 2)},`;
+	    }
+
+	    function formIdea(id) {
+	      const existing = id ? ideaById(id) : null;
+	      const timing = document.getElementById("ideaTimingInput").value;
+	      const channel = document.getElementById("ideaChannelInput").value;
+	      const localBrief = document.getElementById("ideaBriefInput").value.trim();
+	      return {
+	        ...(existing || {
+	          id,
+	          source: "Lokalt",
+	          type: "One-off",
+	          family: "Ny idé",
+	          pillar: "Native",
+	          track: "Brand/Kunde",
+	          platform: "TikTok + X",
+	          canFilm: "Ja",
+	          requiresSf: timing === "usa" ? "Ja" : timing === "tur" ? "Delvis" : "Nei",
+	          priority: "Film nå"
+	        }),
+	        id,
+	        title: document.getElementById("ideaTitleInput").value.trim() || "Ny idé",
+	        timing,
+	        channel,
+	        localBrief
+	      };
+	    }
+
+	    function updateGeneratedPreview() {
+	      const id = document.getElementById("editIdeaId").value || "LOCAL-NY-ID";
+	      const idea = formIdea(id);
+	      document.getElementById("generatedCode").value = generatedIdeaObject(idea);
+	      document.getElementById("generatedCodeWrap").classList.add("is-visible");
+	    }
+
+	    function openIdeaForm(id = "") {
+	      const idea = id ? ideaById(id) : null;
+	      document.getElementById("editIdeaId").value = id;
+	      document.getElementById("formModeTag").textContent = idea ? "Endre" : "Ny idé";
+	      document.getElementById("ideaFormTitle").textContent = idea ? "Endre idé" : "Legg til idé";
+	      document.getElementById("ideaTitleInput").value = idea ? idea.title : "";
+	      document.getElementById("ideaTimingInput").value = idea ? idea.timing : "for";
+	      document.getElementById("ideaChannelInput").value = idea ? idea.channel : "begge";
+	      document.getElementById("ideaBriefInput").value = idea ? (idea.localBrief || (briefFor(idea) || {}).concept || "") : "";
+	      document.getElementById("generatedCode").value = idea ? generatedIdeaObject(idea) : "";
+	      document.getElementById("generatedCodeWrap").classList.toggle("is-visible", Boolean(idea));
+	      document.getElementById("ideaFormDialog").showModal();
+	    }
+
+	    function saveIdeaForm(event) {
+	      event.preventDefault();
+	      const existingId = document.getElementById("editIdeaId").value;
+	      const id = existingId || `LOCAL-${Date.now().toString(36).toUpperCase()}`;
+	      const idea = formIdea(id);
+	      if (existingId) {
+	        const localIndex = localIdeas.findIndex(item => item.id === id);
+	        if (localIndex >= 0) {
+	          localIdeas[localIndex] = idea;
+	        } else {
+	          setIdeaMeta(id, {
+	            title: idea.title,
+	            timing: idea.timing,
+	            channel: idea.channel,
+	            localBrief: idea.localBrief
+	          });
+	        }
+	      } else {
+	        localIdeas.unshift(idea);
+	        activeOrder.next.unshift(id);
+	        document.getElementById("editIdeaId").value = id;
+	        document.getElementById("formModeTag").textContent = "Lagret lokalt";
+	        document.getElementById("ideaFormTitle").textContent = "Endre idé";
+	      }
+	      activeOrder = normalizeOrder(activeOrder);
+	      saveLocalState();
+	      saveOrder();
+	      document.getElementById("generatedCode").value = generatedIdeaObject(idea);
+	      document.getElementById("generatedCodeWrap").classList.add("is-visible");
+	      renderAll();
+	      setShareStatus("Idé lagret lokalt");
+	    }
+
+	    function removeIdeaLocally(id) {
+	      if (!window.confirm("Fjerne ideen lokalt fra denne visningen?")) return;
+	      localIdeas = localIdeas.filter(idea => idea.id !== id);
+	      delete localOverrides[id];
+	      if (ideas.some(idea => idea.id === id)) removedIds.add(id);
+	      selectedIds.delete(id);
+	      activeOrder.next = activeOrder.next.filter(item => item !== id);
+	      activeOrder.later = activeOrder.later.filter(item => item !== id);
+	      activeOrder = normalizeOrder(activeOrder);
+	      saveLocalState();
+	      saveSelected();
+	      saveOrder();
+	      renderAll();
+	      setShareStatus("Idé fjernet lokalt");
+	    }
+
 	    function renderAll() {
 	      renderShootlist();
 	      renderFunnel();
 	      document.querySelectorAll(".idea-card").forEach(card => {
-	        card.addEventListener("click", () => openIdea(card.dataset.id));
+	        card.addEventListener("click", event => {
+	          if (event.target.closest("button")) return;
+	          openIdea(card.dataset.id);
+	        });
 	        card.addEventListener("keydown", event => {
-	          if (event.target.closest("[data-select]")) return;
+	          if (event.target.closest("button")) return;
 	          if (event.key === "Enter" || event.key === " ") {
 	            event.preventDefault();
 	            openIdea(card.dataset.id);
@@ -2061,6 +2931,18 @@
 	        button.addEventListener("click", event => {
 	          event.stopPropagation();
 	          moveIdea(event.currentTarget.dataset.move, Number(event.currentTarget.dataset.direction));
+	        });
+	      });
+	      document.querySelectorAll("[data-edit]").forEach(button => {
+	        button.addEventListener("click", event => {
+	          event.stopPropagation();
+	          openIdeaForm(event.currentTarget.dataset.edit);
+	        });
+	      });
+	      document.querySelectorAll("[data-remove]").forEach(button => {
+	        button.addEventListener("click", event => {
+	          event.stopPropagation();
+	          removeIdeaLocally(event.currentTarget.dataset.remove);
 	        });
 	      });
 	      document.querySelectorAll(".idea-card[draggable='true']").forEach(card => {
@@ -2085,7 +2967,7 @@
 	          event.preventDefault();
 	          event.stopPropagation();
 	          const id = event.dataTransfer.getData("text/plain") || draggedId;
-	          if (id && id !== card.dataset.id) moveDraggedIdea(id, card.dataset.lane, card.dataset.id);
+	          if (id && id !== card.dataset.id) moveDraggedIdea(id, card.dataset.lane, card.dataset.id, card.dataset.timing);
 	        });
 	      });
 	      document.querySelectorAll("[data-lane-body]").forEach(laneBody => {
@@ -2095,7 +2977,32 @@
 	        laneBody.addEventListener("drop", event => {
 	          event.preventDefault();
 	          const id = event.dataTransfer.getData("text/plain") || draggedId;
-	          if (id && !event.target.closest(".idea-card")) moveDraggedIdea(id, laneBody.dataset.laneBody);
+	          if (id && !event.target.closest(".idea-card")) moveDraggedIdea(id, laneBody.dataset.laneBody, null, laneBody.dataset.timing);
+	        });
+	      });
+	      document.querySelectorAll("[data-flat-body]").forEach(flatBody => {
+	        flatBody.addEventListener("dragover", event => {
+	          event.preventDefault();
+	        });
+	        flatBody.addEventListener("drop", event => {
+	          event.preventDefault();
+	          const id = event.dataTransfer.getData("text/plain") || draggedId;
+	          if (id && !event.target.closest(".idea-card")) moveDraggedIdea(id, laneOf(id), null, flatBody.dataset.timing);
+	        });
+	      });
+	      document.querySelectorAll("[data-channel-drop]").forEach(drop => {
+	        drop.addEventListener("dragover", event => {
+	          event.preventDefault();
+	          drop.classList.add("drag-over");
+	        });
+	        drop.addEventListener("dragleave", () => {
+	          drop.classList.remove("drag-over");
+	        });
+	        drop.addEventListener("drop", event => {
+	          event.preventDefault();
+	          drop.classList.remove("drag-over");
+	          const id = event.dataTransfer.getData("text/plain") || draggedId;
+	          if (id) updateIdeaMeta(id, { channel: drop.dataset.channelDrop, timing: drop.dataset.timing });
 	        });
 	      });
 	    }
@@ -2111,7 +3018,7 @@
     });
 
     document.getElementById("copyBrief").addEventListener("click", async () => {
-	      const idea = ideas.find(item => item.id === currentIdeaId);
+	      const idea = ideaById(currentIdeaId);
 	      if (!idea) return;
 	      const text = briefText(idea);
 	      await writeClipboard(text);
@@ -2120,12 +3027,27 @@
 	    });
 
     document.getElementById("copySelected").addEventListener("click", async () => {
-      const selectedIdeas = ideas.filter(idea => selectedIds.has(idea.id));
+      const selectedIdeas = currentIdeas().filter(idea => selectedIds.has(idea.id));
       if (!selectedIdeas.length) return;
 	      const text = selectedIdeas.map(briefText).join("\n\n---\n\n");
 	      await writeClipboard(text);
 	      document.getElementById("copySelected").textContent = "Kopiert";
 	      setTimeout(() => document.getElementById("copySelected").textContent = "Kopier valgte", 1200);
+	    });
+
+	    document.getElementById("ideaForm").addEventListener("submit", saveIdeaForm);
+
+	    document.getElementById("ideaForm").addEventListener("input", updateGeneratedPreview);
+
+	    document.getElementById("closeIdeaForm").addEventListener("click", () => {
+	      document.getElementById("ideaFormDialog").close();
+	    });
+
+	    document.getElementById("copyGeneratedCode").addEventListener("click", async () => {
+	      updateGeneratedPreview();
+	      await writeClipboard(document.getElementById("generatedCode").value);
+	      document.getElementById("copyGeneratedCode").textContent = "Kopiert";
+	      setTimeout(() => document.getElementById("copyGeneratedCode").textContent = "Kopier JS-snutt", 1200);
 	    });
 
 	    makeToolbar("toolbar");
