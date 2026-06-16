@@ -746,7 +746,9 @@
 	    }
 
 	    .toolbar {
-	      grid-template-columns: minmax(260px, 1fr) auto auto auto auto auto;
+	      grid-template-columns: minmax(220px, 1fr) 190px auto repeat(4, max-content);
+	      align-items: end;
+	      gap: 8px;
 	      margin: 18px 0 10px;
 	    }
 
@@ -754,6 +756,11 @@
 	    .toolbar select {
 	      min-height: 46px;
 	      font-size: 15px;
+	    }
+
+	    .toolbar .ghost-btn {
+	      min-height: 46px;
+	      white-space: nowrap;
 	    }
 
 	    .shootlist {
@@ -825,6 +832,69 @@
 	      border: 1px solid var(--line);
 	      border-radius: 8px;
 	      padding: 0 10px;
+	    }
+
+	    .phase-overview {
+	      display: grid;
+	      grid-template-columns: repeat(3, minmax(0, 1fr));
+	      gap: 10px;
+	      margin: 8px 0 14px;
+	    }
+
+	    .phase-card {
+	      display: grid;
+	      gap: 8px;
+	      min-width: 0;
+	      padding: 12px;
+	      border: 1px solid var(--line);
+	      border-radius: 8px;
+	      background: #fff;
+	      color: var(--ink);
+	      text-align: left;
+	      cursor: pointer;
+	    }
+
+	    .phase-card.active {
+	      border-color: var(--ink);
+	      box-shadow: inset 0 0 0 1px var(--ink);
+	    }
+
+	    .phase-card-top {
+	      display: flex;
+	      align-items: center;
+	      justify-content: space-between;
+	      gap: 8px;
+	    }
+
+	    .phase-card strong {
+	      font-size: 16px;
+	    }
+
+	    .phase-count {
+	      color: var(--ink);
+	      font-size: 22px;
+	      font-weight: 900;
+	      line-height: 1;
+	    }
+
+	    .phase-breakdown {
+	      color: var(--muted);
+	      font-size: 12px;
+	      font-weight: 700;
+	      line-height: 1.35;
+	    }
+
+	    .toolbar-field {
+	      display: grid;
+	      gap: 4px;
+	      min-width: 170px;
+	    }
+
+	    .toolbar-field span {
+	      color: var(--muted);
+	      font-size: 11px;
+	      font-weight: 800;
+	      text-transform: uppercase;
 	    }
 
 	    .channel-filter {
@@ -908,29 +978,6 @@
 	      grid-template-columns: 1fr;
 	    }
 
-	    .channel-dropbar {
-	      display: flex;
-	      flex-wrap: wrap;
-	      gap: 8px;
-	    }
-
-	    .channel-drop {
-	      border: 1px dashed var(--line);
-	      border-radius: 8px;
-	      background: rgba(255,255,255,.6);
-	      color: var(--muted);
-	      padding: 8px 10px;
-	      font-size: 13px;
-	      font-weight: 800;
-	      cursor: copy;
-	    }
-
-	    .channel-drop.drag-over {
-	      border-color: var(--green);
-	      background: var(--green-soft);
-	      color: var(--green);
-	    }
-
 	    .lane {
 	      min-height: 0;
 	      border: 0;
@@ -943,6 +990,20 @@
 	      border-bottom: 1px solid var(--line);
 	    }
 
+	    .lane[data-lane="later"] h3 {
+	      color: var(--muted);
+	      font-size: 18px;
+	    }
+
+	    .lane[data-lane="later"] .idea-card {
+	      background: #fbfaf6;
+	    }
+
+	    .lane[data-lane="later"] .rank {
+	      background: #f2f0e9;
+	      color: var(--muted);
+	    }
+
 	    .lane-hint {
 	      display: block;
 	      margin-top: 4px;
@@ -953,6 +1014,26 @@
 
 	    .lane-body {
 	      min-height: 90px;
+	    }
+
+	    .time-section.is-compact {
+	      padding: 14px 18px;
+	    }
+
+	    .time-section.is-compact h3 {
+	      font-size: 20px;
+	    }
+
+	    .time-section.is-compact .time-grid {
+	      grid-template-columns: 1fr;
+	    }
+
+	    .time-section.is-compact .lane h3 {
+	      display: none;
+	    }
+
+	    .time-section.is-compact .lane-body {
+	      min-height: 0;
 	    }
 
 	    .idea-card {
@@ -980,6 +1061,42 @@
 	    .idea-card h4 {
 	      margin: 8px 0 6px;
 	      font-size: 17px;
+	    }
+
+	    .card-footnote {
+	      display: flex;
+	      flex-wrap: wrap;
+	      gap: 8px;
+	      margin-top: 8px;
+	      color: var(--muted);
+	      font-size: 12px;
+	      font-weight: 700;
+	    }
+
+	    .card-channel-select {
+	      max-width: 150px;
+	      min-height: 26px;
+	      border: 0;
+	      border-radius: 7px;
+	      padding: 4px 7px;
+	      font-size: 12px;
+	      font-weight: 800;
+	      cursor: pointer;
+	    }
+
+	    .card-channel-select.channel-native {
+	      background: var(--green-soft);
+	      color: var(--green);
+	    }
+
+	    .card-channel-select.channel-oskar {
+	      background: var(--gold-soft);
+	      color: var(--gold);
+	    }
+
+	    .card-channel-select.channel-begge {
+	      background: var(--blue-soft);
+	      color: var(--blue);
 	    }
 
 	    .card-meta {
@@ -1113,12 +1230,9 @@
 	      margin-top: 9px;
 	    }
 
-	    .open-brief {
-	      display: inline-block;
-	      margin-top: 10px;
-	      color: var(--muted);
-	      font-size: 13px;
-	      font-weight: 800;
+	    .card-footnote span + span::before {
+	      content: "·";
+	      margin-right: 8px;
 	    }
 
 	    .modal-status {
@@ -1136,6 +1250,9 @@
 	      .funnel,
 	      .time-grid,
 	      .shootlist-body {
+	        grid-template-columns: 1fr;
+	      }
+	      .phase-overview {
 	        grid-template-columns: 1fr;
 	      }
 	      .toolbar {
@@ -1167,12 +1284,13 @@
 	      <section id="funnel" class="section active">
 	        <div class="topline">
 		          <div>
-		            <h2>Hva filmer vi nå?</h2>
-		            <p>Dra kortene eller bruk pilene for å sette rekkefølgen. Klikk et kort for brief.</p>
+		            <h2>Hva skal ut når?</h2>
+		            <p>Publiseringsplanen styrer hovedbildet. Dra kort mellom fasene for å endre når de skal ut, og klikk et kort for brief.</p>
 		          </div>
 		        </div>
 		        <div class="toolbar" id="toolbar"></div>
 	        <div class="auth-strip" id="authStrip"></div>
+	        <div class="phase-overview" id="phaseOverview"></div>
 	        <div class="order-note hidden" id="sharedOrderNote">
 	          <span><strong>Du ser en delt rekkefølge.</strong> Trykk knappen hvis denne skal lagres i din browser.</span>
 	          <button class="ghost-btn" id="adoptSharedOrder">Bruk denne rekkefølgen</button>
@@ -1228,7 +1346,15 @@
             <input id="ideaTitleInput" required>
           </label>
           <label>
-            Tid
+            Publiseres
+            <select id="ideaPublishPhaseInput">
+              <option value="for">Før USA</option>
+              <option value="under">Under USA</option>
+              <option value="etter">Etter USA</option>
+            </select>
+          </label>
+          <label>
+            Filmes
             <select id="ideaTimingInput">
               <option value="for">Før reise</option>
               <option value="tur">På turen</option>
@@ -2392,15 +2518,21 @@
 	      { id: "tur", title: "✈️ På turen", short: "På turen" },
 	      { id: "usa", title: "🇺🇸 I USA", short: "I USA" }
 	    ];
+	    const PUBLISH_PHASE_OPTIONS = [
+	      { id: "for", title: "Før USA", short: "Før USA" },
+	      { id: "under", title: "Under USA", short: "Under USA" },
+	      { id: "etter", title: "Etter USA", short: "Etter USA" }
+	    ];
 	    const CHANNEL_OPTIONS = [
 	      { id: "native", label: "Native" },
-	      { id: "oskar", label: "Oskar" },
-	      { id: "begge", label: "Begge" }
+	      { id: "begge", label: "+ Oskar" },
+	      { id: "oskar", label: "Oskar" }
 	    ];
 	    const savedFilters = JSON.parse(localStorage.getItem(FILTERS_STORAGE_KEY) || "{}");
 	    const filters = {
 	      search: "",
 	      channel: "alle",
+	      phase: "alle",
 	      ...savedFilters
 	    };
 	    let selectedIds = new Set(JSON.parse(localStorage.getItem(SELECTED_STORAGE_KEY) || "[]"));
@@ -2442,6 +2574,22 @@
 	      return ["idea", "ready", "filmed", "published"].includes(value) ? value : "idea";
 	    }
 
+	    function normalizePublishPhase(value) {
+	      return ["for", "under", "etter"].includes(value) ? value : "for";
+	    }
+
+	    function normalizeTiming(value) {
+	      return ["for", "tur", "usa"].includes(value) ? value : "for";
+	    }
+
+	    function inferredPublishPhase(record) {
+	      const id = record.id || "";
+	      if (["USA-1", "USA-11"].includes(id)) return "under";
+	      if (["USA-5"].includes(id)) return "etter";
+	      const timing = record.timing || "for";
+	      return timing === "usa" || timing === "tur" ? "under" : "for";
+	    }
+
 	    function statusLabel(value) {
 	      return {
 	        idea: "Idé",
@@ -2477,6 +2625,7 @@
 	        requiresSf: record.requires_sf || record.requiresSf || "Nei",
 	        priority: record.priority || "Vurder",
 	        timing: record.timing || "for",
+	        publishPhase: normalizePublishPhase(record.publish_phase || record.publishPhase || inferredPublishPhase(record)),
 	        channel: record.channel || "begge",
 	        risk: record.risk || "",
 	        status: normalizeStatus(record.status),
@@ -2501,15 +2650,34 @@
 	      }
 	      return [...ideas, ...localIdeas]
 	        .filter(idea => !removedIds.has(idea.id))
-	        .map(idea => ({ status: "idea", stats: {}, ...idea, ...(localOverrides[idea.id] || {}) }));
+	        .map(idea => {
+	          const merged = { status: "idea", stats: {}, ...idea, ...(localOverrides[idea.id] || {}) };
+	          return { ...merged, publishPhase: normalizePublishPhase(merged.publishPhase || inferredPublishPhase(merged)) };
+	        });
 	    }
 
 	    function timingLabel(value) {
 	      return (TIMING_OPTIONS.find(option => option.id === value) || TIMING_OPTIONS[0]).short;
 	    }
 
+	    function publishPhaseLabel(value) {
+	      return (PUBLISH_PHASE_OPTIONS.find(option => option.id === value) || PUBLISH_PHASE_OPTIONS[0]).short;
+	    }
+
+	    function defaultPublishPhaseFromTiming(value) {
+	      const timing = normalizeTiming(value);
+	      if (timing === "tur" || timing === "usa") return "under";
+	      return "for";
+	    }
+
+	    function filmingMetaFor(idea) {
+	      const timing = normalizeTiming(idea.timing);
+	      if (defaultPublishPhaseFromTiming(timing) === normalizePublishPhase(idea.publishPhase)) return "";
+	      return `Filmes: ${timingLabel(timing)}`;
+	    }
+
 	    function channelLabel(value) {
-	      return (CHANNEL_OPTIONS.find(option => option.id === value) || CHANNEL_OPTIONS[2]).label;
+	      return (CHANNEL_OPTIONS.find(option => option.id === value) || CHANNEL_OPTIONS[0]).label;
 	    }
 
 	    function briefFor(idea) {
@@ -2620,10 +2788,11 @@
 	      const stats = normalizeStats(idea.stats);
 	      const briefText = [brief.concept, brief.context, brief.say, brief.make, brief.hooks, brief.real, brief.targets, brief.cut, brief.next].flat().filter(Boolean).join(" ");
 	      const statsText = Object.values(stats).filter(Boolean).join(" ");
-	      const haystack = [idea.id, idea.title, idea.source, idea.type, idea.family, idea.pillar, idea.track, idea.platform, idea.priority, idea.canFilm, idea.requiresSf, idea.timing, timingLabel(idea.timing), idea.channel, channelLabel(idea.channel), idea.status, statusLabel(idea.status), statsText, briefText].join(" ").toLowerCase();
+	      const haystack = [idea.id, idea.title, idea.source, idea.type, idea.family, idea.pillar, idea.track, idea.platform, idea.priority, idea.canFilm, idea.requiresSf, idea.timing, timingLabel(idea.timing), idea.publishPhase, publishPhaseLabel(idea.publishPhase), idea.channel, channelLabel(idea.channel), idea.status, statusLabel(idea.status), statsText, briefText].join(" ").toLowerCase();
 	      const matchesSearch = !filters.search || haystack.includes(filters.search.toLowerCase());
 	      const matchesChannel = filters.channel === "alle" || idea.channel === filters.channel || idea.channel === "begge";
-	      return matchesSearch && matchesChannel;
+	      const matchesPhase = filters.phase === "alle" || idea.publishPhase === filters.phase;
+	      return matchesSearch && matchesChannel && matchesPhase;
 	    }
 
 	    function renderAuthStrip() {
@@ -2779,6 +2948,7 @@
 	        requires_sf: idea.requiresSf,
 	        priority: idea.priority,
 	        timing: idea.timing,
+	        publish_phase: normalizePublishPhase(idea.publishPhase),
 	        channel: idea.channel,
 	        risk: idea.risk || null,
 	        status: normalizeStatus(idea.status),
@@ -2794,6 +2964,7 @@
 	      const row = {};
 	      if ("title" in fields) row.title = fields.title;
 	      if ("timing" in fields) row.timing = fields.timing;
+	      if ("publishPhase" in fields) row.publish_phase = normalizePublishPhase(fields.publishPhase);
 	      if ("channel" in fields) row.channel = fields.channel;
 	      if ("risk" in fields) row.risk = fields.risk || null;
 	      if ("status" in fields) row.status = normalizeStatus(fields.status);
@@ -2883,21 +3054,29 @@
 	      const target = document.getElementById(targetId);
 	      target.innerHTML = `
 	        <input aria-label="Søk" placeholder="Søk i ideer..." data-filter="search">
+	        <label class="toolbar-field">
+	          <span>Publisering</span>
+	          <select data-filter="phase" aria-label="Vis publisering">
+	            <option value="alle">Alle faser</option>
+	            ${PUBLISH_PHASE_OPTIONS.map(phase => `<option value="${phase.id}">${phase.short}</option>`).join("")}
+	          </select>
+	        </label>
 	        <div class="channel-filter" aria-label="Kanalfilter">
 	          <button type="button" data-channel-filter="alle">Alle</button>
 	          <button type="button" data-channel-filter="native">Native</button>
-	          <button type="button" data-channel-filter="oskar">Oskar</button>
+	          <button type="button" data-channel-filter="oskar">+ Oskar</button>
 	        </div>
-	        <button class="ghost-btn" id="addIdea" type="button">Legg til idé</button>
-	        <button class="ghost-btn" id="toggleEditMode" type="button">Rediger av</button>
-	        <button class="ghost-btn" id="copyTeamLink" type="button">Kopier teamlenke</button>
-	        <button class="ghost-btn" id="resetOrder" type="button">Tilbakestill rekkefølge</button>
+	        <button class="ghost-btn" id="addIdea" type="button" title="Legg til ny idé">Ny idé</button>
+	        <button class="ghost-btn" id="toggleEditMode" type="button" title="Endre kanal eller dra kort mellom fasene">Endre</button>
+	        <button class="ghost-btn" id="copyTeamLink" type="button" title="Kopier teamlenke">Kopier lenke</button>
+	        <button class="ghost-btn" id="resetOrder" type="button" title="Tilbakestill rekkefølge">Nullstill</button>
 	      `;
 	      target.querySelectorAll("[data-filter]").forEach(control => {
-	        control.value = filters.search || "";
-	        control.addEventListener("input", event => {
+	        control.value = filters[control.dataset.filter] || (control.dataset.filter === "phase" ? "alle" : "");
+	        const eventName = control.tagName === "SELECT" ? "change" : "input";
+	        control.addEventListener(eventName, event => {
 	          filters[event.target.dataset.filter] = event.target.value;
-	          localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify({ search: filters.search, channel: filters.channel }));
+	          localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify({ search: filters.search, channel: filters.channel, phase: filters.phase }));
 	          renderAll();
 	        });
 	      });
@@ -2908,7 +3087,7 @@
 	          target.querySelectorAll("[data-channel-filter]").forEach(item => {
 	            item.classList.toggle("active", item.dataset.channelFilter === filters.channel);
 	          });
-	          localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify({ search: filters.search, channel: filters.channel }));
+	          localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify({ search: filters.search, channel: filters.channel, phase: filters.phase }));
 	          renderAll();
 	        });
 	      });
@@ -2919,7 +3098,7 @@
 	      document.getElementById("toggleEditMode").addEventListener("click", () => {
 	        if (!requireWriteAccess()) return;
 	        editMode = !editMode;
-	        document.getElementById("toggleEditMode").textContent = editMode ? "Rediger på" : "Rediger av";
+	        document.getElementById("toggleEditMode").textContent = editMode ? "Ferdig" : "Endre";
 	        document.getElementById("toggleEditMode").classList.toggle("active", editMode);
 	        renderAll();
 	      });
@@ -2966,6 +3145,45 @@
 	      setShareStatus("Rekkefølgen er tilbakestilt");
 	    }
 
+	    function setPhaseFilter(phase) {
+	      filters.phase = phase;
+	      localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify({ search: filters.search, channel: filters.channel, phase: filters.phase }));
+	      const select = document.querySelector('[data-filter="phase"]');
+	      if (select) select.value = filters.phase;
+	      renderAll();
+	    }
+
+	    function phaseCounts(phaseId) {
+	      const phaseIdeas = currentIdeas().filter(idea => normalizePublishPhase(idea.publishPhase) === phaseId);
+	      return {
+	        total: phaseIdeas.length,
+	        next: phaseIdeas.filter(idea => laneOf(idea.id) === "next").length,
+	        native: phaseIdeas.filter(idea => idea.channel === "native").length,
+	        begge: phaseIdeas.filter(idea => idea.channel === "begge").length,
+	        oskar: phaseIdeas.filter(idea => idea.channel === "oskar").length
+	      };
+	    }
+
+	    function renderPhaseOverview() {
+	      const target = document.getElementById("phaseOverview");
+	      if (!target) return;
+	      target.innerHTML = PUBLISH_PHASE_OPTIONS.map(phase => {
+	        const counts = phaseCounts(phase.id);
+	        const active = filters.phase === phase.id || filters.phase === "alle";
+	        return `
+	          <button class="phase-card ${active && filters.phase === phase.id ? "active" : ""}" type="button" data-phase-card="${phase.id}">
+	            <span class="phase-card-top"><strong>${phase.short}</strong><span class="phase-count">${counts.total}</span></span>
+	            <span class="phase-breakdown">Neste opp: ${counts.next} · Native ${counts.native} · + Oskar ${counts.begge} · Oskar ${counts.oskar}</span>
+	          </button>
+	        `;
+	      }).join("");
+	      target.querySelectorAll("[data-phase-card]").forEach(button => {
+	        button.addEventListener("click", () => {
+	          setPhaseFilter(filters.phase === button.dataset.phaseCard ? "alle" : button.dataset.phaseCard);
+	        });
+	      });
+	    }
+
 	    function adoptSharedOrder() {
 	      if (usingRemoteData() && !requireWriteAccess()) return;
 	      sharedOrder = null;
@@ -2986,11 +3204,18 @@
 	      const selected = selectedIds.has(idea.id);
 	      const brief = briefFor(idea) || {};
 	      const concept = brief.concept || `${idea.pillar} / ${idea.track}`;
-	      const sortable = Boolean(options.sortable);
+	      const canInlineEdit = editMode && (canWriteShared() || !usingRemoteData());
+	      const sortable = Boolean(options.sortable) && canInlineEdit;
 	      const rank = options.rank ? `<span class="rank">${options.rank}</span>` : "";
 	      const dragHandle = sortable ? `<span class="drag-hint" aria-hidden="true">↕</span>` : "";
 	      const timingAttr = options.timing ? `data-timing="${options.timing}"` : "";
+	      const publishAttr = options.publishPhase ? `data-publish-phase="${options.publishPhase}"` : "";
 	      const channelName = channelLabel(idea.channel);
+	      const channelControl = canInlineEdit
+	        ? `<select class="card-channel-select channel-${idea.channel}" data-channel-select="${idea.id}" aria-label="Kanal for ${escapeHtml(idea.title)}">
+	            ${CHANNEL_OPTIONS.map(channel => `<option value="${channel.id}" ${channel.id === idea.channel ? "selected" : ""}>${channel.label}</option>`).join("")}
+	          </select>`
+	        : `<span class="channel-badge channel-${idea.channel}">${channelName}</span>`;
 	      const riskBadge = idea.risk ? `<span class="risk-badge">Risiko</span>` : "";
 	      const status = normalizeStatus(idea.status);
 	      const statusBadge = `<span class="status-badge status-${status}">${statusLabel(status)}</span>`;
@@ -2999,15 +3224,16 @@
 	        <button type="button" class="move-btn" data-move="${idea.id}" data-direction="-1" aria-label="Flytt opp">↑</button>
 	        <button type="button" class="move-btn" data-move="${idea.id}" data-direction="1" aria-label="Flytt ned">↓</button>
 	      ` : "";
+	      const filmingMeta = filmingMetaFor(idea);
 	      return `
-	        <article class="idea-card ${selected ? "selected" : ""}" data-id="${idea.id}" ${options.laneId ? `data-lane="${options.laneId}"` : ""} ${timingAttr} ${sortable ? `draggable="true"` : ""} role="button" tabindex="0">
+	        <article class="idea-card ${selected ? "selected" : ""}" data-id="${idea.id}" ${options.laneId ? `data-lane="${options.laneId}"` : ""} ${timingAttr} ${publishAttr} ${sortable ? `draggable="true"` : ""} role="button" tabindex="0">
 	          <div class="card-top">
-	            <span class="card-meta">${rank}<span class="id">${idea.id}</span><span class="channel-badge channel-${idea.channel}">${channelName}</span>${statusBadge}${riskBadge}${dragHandle}</span>
+	            <span class="card-meta">${rank}<span class="id">${idea.id}</span>${channelControl}${statusBadge}${riskBadge}${dragHandle}</span>
 	            <span class="card-actions">${moveControls}${editControls}<button type="button" class="quick-select ${selected ? "on" : ""}" data-select="${idea.id}" aria-pressed="${selected ? "true" : "false"}">${selected ? "Valgt" : "+ Velg"}</button></span>
 	          </div>
 	          <h4>${escapeHtml(idea.title)}</h4>
 	          <p class="concept">${escapeHtml(concept)}</p>
-	          <span class="open-brief">Klikk for brief</span>
+	          <div class="card-footnote">${filmingMeta ? `<span>${escapeHtml(filmingMeta)}</span>` : ""}<span>Brief</span></div>
 	        </article>
 	      `;
 	    }
@@ -3048,7 +3274,8 @@
         `${idea.id} - ${idea.title}`,
         `Prioritet: ${idea.priority}`,
         `Status: ${statusLabel(idea.status)}`,
-        `Tid: ${timingLabel(idea.timing)}`,
+        `Publiseres: ${publishPhaseLabel(idea.publishPhase)}`,
+        `Filmes: ${timingLabel(idea.timing)}`,
         `Kanal: ${channelLabel(idea.channel)}`,
         `Plattform: ${idea.platform}`,
         `Pilar/spor: ${idea.pillar} / ${idea.track}`,
@@ -3160,7 +3387,7 @@
 	      renderAll();
 	    }
 
-	    function moveDraggedIdea(id, targetLane, beforeId = null, targetTiming = null) {
+	    function moveDraggedIdea(id, targetLane, beforeId = null, targetPublishPhase = null) {
 	      if (!requireWriteAccess()) return;
 	      if (!id || !targetLane || !activeOrder[targetLane]) return;
 	      activeOrder.next = activeOrder.next.filter(item => item !== id);
@@ -3172,7 +3399,7 @@
 	      } else {
 	        targetList.push(id);
 	      }
-	      if (targetTiming) setIdeaMeta(id, { timing: targetTiming });
+	      if (targetPublishPhase) setIdeaMeta(id, { publishPhase: targetPublishPhase });
 	      hasSharedOrder = false;
 	      saveLocalState();
 	      saveOrder();
@@ -3187,49 +3414,35 @@
 	    function renderFunnel() {
 	      const ranks = rankMap();
 	      const laneConfig = [
-	        { id: "next", title: "Neste opp", hint: "Det teamet bør filme først." },
-	        { id: "later", title: "Senere", hint: "Bra ideer som kan vente litt." }
+	        { id: "next", title: "Neste opp", hint: "Prioritert for publisering." },
+	        { id: "later", title: "Senere", hint: "Kan vente." }
 	      ];
-	      const sectionMarkup = TIMING_OPTIONS.map(time => {
-	        const visibleInTime = currentIdeas().filter(idea => idea.timing === time.id).filter(matchesFilters);
-	        const channelDropMarkup = CHANNEL_OPTIONS.map(channel => `
-	          <div class="channel-drop" data-channel-drop="${channel.id}" data-timing="${time.id}">Drop til ${channel.label}</div>
-	        `).join("");
-	        const flatTime = time.id === "tur";
-	        const lanes = flatTime ? `
-	          <div class="lane flat-lane">
-	            <h3>Reiseideer<span>${visibleInTime.length}</span><span class="lane-hint">Flat liste fordi reisen har få kort.</span></h3>
-	            <div class="lane-body" data-flat-body="${time.id}" data-timing="${time.id}">
-	              ${visibleInTime.length
-	                ? [...activeOrder.next, ...activeOrder.later]
-	                    .map(ideaById)
-	                    .filter(Boolean)
-	                    .filter(idea => idea.timing === time.id)
-	                    .filter(matchesFilters)
-	                    .map(idea => cardHtml(idea, { sortable: true, laneId: laneOf(idea.id), timing: time.id, rank: ranks.get(idea.id) }))
-	                    .join("")
-	                : `<div class="empty">Ingen ideer her</div>`}
-	            </div>
-	          </div>
-	        ` : laneConfig.map(lane => {
+	      const phases = filters.phase === "alle"
+	        ? PUBLISH_PHASE_OPTIONS
+	        : PUBLISH_PHASE_OPTIONS.filter(phase => phase.id === filters.phase);
+	      const sectionMarkup = phases.map(phase => {
+	        const visibleInPhase = currentIdeas().filter(idea => idea.publishPhase === phase.id).filter(matchesFilters);
+	        const nextCount = orderedIdeas("next").filter(idea => idea.publishPhase === phase.id).filter(matchesFilters).length;
+	        const compactPhase = phase.id === "etter" && visibleInPhase.length <= 2 && nextCount === 0;
+	        const visibleLanes = compactPhase ? laneConfig.filter(lane => lane.id === "later") : laneConfig;
+	        const lanes = visibleLanes.map(lane => {
 	          const laneIdeas = orderedIdeas(lane.id)
-	            .filter(idea => idea.timing === time.id)
+	            .filter(idea => idea.publishPhase === phase.id)
 	            .filter(matchesFilters);
 	          const body = laneIdeas.length
-	            ? laneIdeas.map(idea => cardHtml(idea, { sortable: true, laneId: lane.id, timing: time.id, rank: ranks.get(idea.id) })).join("")
+	            ? laneIdeas.map(idea => cardHtml(idea, { sortable: true, laneId: lane.id, timing: idea.timing, publishPhase: phase.id, rank: ranks.get(idea.id) })).join("")
 	            : `<div class="empty">Ingen ideer her</div>`;
 	          return `
 	            <div class="lane" data-lane="${lane.id}">
 	              <h3>${lane.title}<span>${laneIdeas.length}</span><span class="lane-hint">${lane.hint}</span></h3>
-	              <div class="lane-body" data-lane-body="${lane.id}" data-timing="${time.id}">${body}</div>
+	              <div class="lane-body" data-lane-body="${lane.id}" data-publish-phase="${phase.id}">${body}</div>
 	            </div>
 	          `;
 	        }).join("");
 	        return `
-	          <section class="time-section" data-time-section="${time.id}">
-	            <h3>${time.title}<span>${visibleInTime.length} ideer</span></h3>
-	            <div class="channel-dropbar">${channelDropMarkup}</div>
-	            <div class="time-grid ${flatTime ? "flat" : ""}">${lanes}</div>
+	          <section class="time-section ${compactPhase ? "is-compact" : ""}" data-publish-section="${phase.id}">
+	            <h3>${phase.title}<span>${visibleInPhase.length} poster</span></h3>
+	            <div class="time-grid">${lanes}</div>
 	          </section>
 	        `;
 	      }).join("");
@@ -3255,7 +3468,8 @@
 	      document.getElementById("modalTitle").textContent = idea.title;
 	      document.getElementById("modalTags").innerHTML = `
 	        <span class="tag">${bucketLabel(idea)}</span>
-	        <span class="tag">${timingLabel(idea.timing)}</span>
+	        <span class="tag">Ut: ${publishPhaseLabel(idea.publishPhase)}</span>
+	        <span class="tag">Filmes: ${timingLabel(idea.timing)}</span>
 	        <span class="channel-badge channel-${idea.channel}">${channelLabel(idea.channel)}</span>
 	        <span class="status-badge status-${normalizeStatus(idea.status)}">${statusLabel(idea.status)}</span>
 	        ${idea.risk ? `<span class="risk-badge">Risiko</span>` : ""}
@@ -3303,6 +3517,7 @@
 	        canFilm: idea.canFilm,
 	        requiresSf: idea.requiresSf,
 	        priority: idea.priority,
+	        publishPhase: normalizePublishPhase(idea.publishPhase),
 	        timing: idea.timing,
 	        channel: idea.channel,
 	        status: normalizeStatus(idea.status),
@@ -3315,6 +3530,7 @@
 
 	    function formIdea(id) {
 	      const existing = id ? ideaById(id) : null;
+	      const publishPhase = document.getElementById("ideaPublishPhaseInput").value;
 	      const timing = document.getElementById("ideaTimingInput").value;
 	      const channel = document.getElementById("ideaChannelInput").value;
 	      const status = document.getElementById("ideaStatusInput").value;
@@ -3341,6 +3557,7 @@
 	        }),
 	        id,
 	        title: document.getElementById("ideaTitleInput").value.trim() || "Ny idé",
+	        publishPhase,
 	        timing,
 	        channel,
 	        status,
@@ -3363,6 +3580,7 @@
 	      document.getElementById("formModeTag").textContent = idea ? "Endre" : "Ny idé";
 	      document.getElementById("ideaFormTitle").textContent = idea ? "Endre idé" : "Legg til idé";
 	      document.getElementById("ideaTitleInput").value = idea ? idea.title : "";
+	      document.getElementById("ideaPublishPhaseInput").value = idea ? normalizePublishPhase(idea.publishPhase) : (filters.phase !== "alle" ? filters.phase : "for");
 	      document.getElementById("ideaTimingInput").value = idea ? idea.timing : "for";
 	      document.getElementById("ideaChannelInput").value = idea ? idea.channel : "begge";
 	      document.getElementById("ideaStatusInput").value = idea ? normalizeStatus(idea.status) : "idea";
@@ -3432,6 +3650,7 @@
 	        } else {
 	          setIdeaMeta(id, {
 	            title: idea.title,
+	            publishPhase: idea.publishPhase,
 	            timing: idea.timing,
 	            channel: idea.channel,
 	            status: idea.status,
@@ -3497,15 +3716,16 @@
 
 	    function renderAll() {
 	      renderAuthStrip();
+	      renderPhaseOverview();
 	      renderShootlist();
 	      renderFunnel();
 	      document.querySelectorAll(".idea-card").forEach(card => {
 	        card.addEventListener("click", event => {
-	          if (event.target.closest("button")) return;
+	          if (event.target.closest("button, select, input, textarea")) return;
 	          openIdea(card.dataset.id);
 	        });
 	        card.addEventListener("keydown", event => {
-	          if (event.target.closest("button")) return;
+	          if (event.target.closest("button, select, input, textarea")) return;
 	          if (event.key === "Enter" || event.key === " ") {
 	            event.preventDefault();
 	            openIdea(card.dataset.id);
@@ -3537,6 +3757,13 @@
 	          removeIdeaLocally(event.currentTarget.dataset.remove);
 	        });
 	      });
+	      document.querySelectorAll("[data-channel-select]").forEach(select => {
+	        select.addEventListener("click", event => event.stopPropagation());
+	        select.addEventListener("change", event => {
+	          event.stopPropagation();
+	          updateIdeaMeta(event.currentTarget.dataset.channelSelect, { channel: event.currentTarget.value });
+	        });
+	      });
 	      document.querySelectorAll(".idea-card[draggable='true']").forEach(card => {
 	        card.addEventListener("dragstart", event => {
 	          draggedId = card.dataset.id;
@@ -3559,7 +3786,7 @@
 	          event.preventDefault();
 	          event.stopPropagation();
 	          const id = event.dataTransfer.getData("text/plain") || draggedId;
-	          if (id && id !== card.dataset.id) moveDraggedIdea(id, card.dataset.lane, card.dataset.id, card.dataset.timing);
+	          if (id && id !== card.dataset.id) moveDraggedIdea(id, card.dataset.lane, card.dataset.id, card.dataset.publishPhase);
 	        });
 	      });
 	      document.querySelectorAll("[data-lane-body]").forEach(laneBody => {
@@ -3569,32 +3796,7 @@
 	        laneBody.addEventListener("drop", event => {
 	          event.preventDefault();
 	          const id = event.dataTransfer.getData("text/plain") || draggedId;
-	          if (id && !event.target.closest(".idea-card")) moveDraggedIdea(id, laneBody.dataset.laneBody, null, laneBody.dataset.timing);
-	        });
-	      });
-	      document.querySelectorAll("[data-flat-body]").forEach(flatBody => {
-	        flatBody.addEventListener("dragover", event => {
-	          event.preventDefault();
-	        });
-	        flatBody.addEventListener("drop", event => {
-	          event.preventDefault();
-	          const id = event.dataTransfer.getData("text/plain") || draggedId;
-	          if (id && !event.target.closest(".idea-card")) moveDraggedIdea(id, laneOf(id), null, flatBody.dataset.timing);
-	        });
-	      });
-	      document.querySelectorAll("[data-channel-drop]").forEach(drop => {
-	        drop.addEventListener("dragover", event => {
-	          event.preventDefault();
-	          drop.classList.add("drag-over");
-	        });
-	        drop.addEventListener("dragleave", () => {
-	          drop.classList.remove("drag-over");
-	        });
-	        drop.addEventListener("drop", event => {
-	          event.preventDefault();
-	          drop.classList.remove("drag-over");
-	          const id = event.dataTransfer.getData("text/plain") || draggedId;
-	          if (id) updateIdeaMeta(id, { channel: drop.dataset.channelDrop, timing: drop.dataset.timing });
+	          if (id && !event.target.closest(".idea-card")) moveDraggedIdea(id, laneBody.dataset.laneBody, null, laneBody.dataset.publishPhase);
 	        });
 	      });
 	    }
