@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Oskar Content Dashboard</title>
+  <link rel="icon" href="data:,">
   <style>
     :root {
       --bg: #f6f4ee;
@@ -631,6 +632,10 @@
 	      resize: vertical;
 	    }
 
+	    .form-grid.split {
+	      grid-template-columns: repeat(2, minmax(0, 1fr));
+	    }
+
 	    .generated-code {
 	      display: none;
 	      margin-top: 8px;
@@ -785,6 +790,41 @@
 	      color: var(--green);
 	      font-size: 14px;
 	      font-weight: 700;
+	    }
+
+	    .auth-strip {
+	      display: flex;
+	      align-items: center;
+	      justify-content: space-between;
+	      gap: 12px;
+	      margin: 0 0 14px;
+	      padding: 12px;
+	      border: 1px solid var(--line);
+	      border-radius: 8px;
+	      background: #fff;
+	      color: var(--muted);
+	      font-size: 14px;
+	      line-height: 1.35;
+	    }
+
+	    .auth-strip strong {
+	      color: var(--ink);
+	    }
+
+	    .auth-actions {
+	      display: flex;
+	      align-items: center;
+	      gap: 8px;
+	      flex-wrap: wrap;
+	      justify-content: flex-end;
+	    }
+
+	    .auth-actions input {
+	      min-height: 38px;
+	      min-width: 220px;
+	      border: 1px solid var(--line);
+	      border-radius: 8px;
+	      padding: 0 10px;
 	    }
 
 	    .channel-filter {
@@ -1004,6 +1044,22 @@
 	      color: var(--blue);
 	    }
 
+	    .status-badge {
+	      display: inline-flex;
+	      align-items: center;
+	      min-height: 24px;
+	      padding: 4px 7px;
+	      border-radius: 7px;
+	      background: #f2f0e9;
+	      color: var(--muted);
+	      font-size: 12px;
+	      font-weight: 800;
+	    }
+
+	    .status-ready { background: var(--green-soft); color: var(--green); }
+	    .status-filmed { background: var(--blue-soft); color: var(--blue); }
+	    .status-published { background: var(--gold-soft); color: var(--gold); }
+
 	    .risk-badge {
 	      display: inline-flex;
 	      align-items: center;
@@ -1116,6 +1172,7 @@
 		          </div>
 		        </div>
 		        <div class="toolbar" id="toolbar"></div>
+	        <div class="auth-strip" id="authStrip"></div>
 	        <div class="order-note hidden" id="sharedOrderNote">
 	          <span><strong>Du ser en delt rekkefølge.</strong> Trykk knappen hvis denne skal lagres i din browser.</span>
 	          <button class="ghost-btn" id="adoptSharedOrder">Bruk denne rekkefølgen</button>
@@ -1187,8 +1244,39 @@
             </select>
           </label>
           <label>
+            Status
+            <select id="ideaStatusInput">
+              <option value="idea">Idé</option>
+              <option value="ready">Klar</option>
+              <option value="filmed">Filmet</option>
+              <option value="published">Publisert</option>
+            </select>
+          </label>
+          <label>
             Kort brief
             <textarea id="ideaBriefInput" placeholder="Hva ser vi? Hva må være ekte?"></textarea>
+          </label>
+          <div class="form-grid split">
+            <label>
+              TikTok views
+              <input id="statsTiktokInput" inputmode="numeric" placeholder="0">
+            </label>
+            <label>
+              X views
+              <input id="statsXInput" inputmode="numeric" placeholder="0">
+            </label>
+            <label>
+              LinkedIn views
+              <input id="statsLinkedinInput" inputmode="numeric" placeholder="0">
+            </label>
+            <label>
+              Reposts / kommentarer
+              <input id="statsRepostsInput" placeholder="Kort tall/notat">
+            </label>
+          </div>
+          <label>
+            Stats-notat
+            <textarea id="statsNotesInput" placeholder="Hva lærte vi av posten?"></textarea>
           </label>
         </div>
         <div class="generated-code" id="generatedCodeWrap">
@@ -1208,6 +1296,7 @@
     </form>
   </dialog>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const ideas = [
       {"id":"X-8","title":"Website In, Content Out - Live In Town","source":"Live demo","type":"Serie","family":"B - Kunde","pillar":"Native","track":"Kunde/Brand","platform":"TikTok + X","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"begge"},
@@ -1226,7 +1315,7 @@
       {"id":"R2-5","title":"The Investor Whiteboard Test","source":"Rapport 2","type":"One-off","family":"A - SF","pillar":"Native","track":"Investor","platform":"LinkedIn + TikTok","canFilm":"Nei","requiresSf":"Ja","priority":"Vurder","timing":"usa","channel":"native"},
       {"id":"R2-6","title":"Norway Pitch vs SF Pitch","source":"Rapport 2","type":"One-off","family":"A - SF","pillar":"Norge + Native","track":"Brand/Investor","platform":"TikTok + X","canFilm":"Delvis","requiresSf":"Delvis","priority":"Sterk","timing":"usa","channel":"oskar"},
       {"id":"R2-7","title":"The 24-Hour Product Decision","source":"Rapport 2","type":"One-off","family":"A - SF","pillar":"Native","track":"Investor","platform":"LinkedIn + TikTok","canFilm":"Delvis","requiresSf":"Nei","priority":"Vurder","timing":"for","channel":"native"},
-      {"id":"R2-9","title":"I Made You Something Free","source":"Rapport 2","type":"Serie","family":"B - Kunde","pillar":"Native","track":"Kunde/Brand","platform":"TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"begge"},
+      {"id":"R2-9","title":"I Made You Something Free","source":"Rapport 2","type":"Serie","family":"B - Kunde","pillar":"Native","track":"Kunde/Brand","platform":"TikTok","canFilm":"Ja","requiresSf":"Ja","priority":"Film nå","timing":"usa","channel":"begge"},
       {"id":"R2-10","title":"Owner Presses The Button","source":"Rapport 2","type":"One-off/Serie","family":"B - Kunde","pillar":"Native","track":"Kunde","platform":"TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"native"},
       {"id":"R2-11","title":"The Tone Test","source":"Rapport 2","type":"One-off","family":"B - Kunde","pillar":"Native","track":"Kunde","platform":"TikTok + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"native"},
       {"id":"R2-12","title":"Before/After Feed Wall","source":"Rapport 2","type":"Serie","family":"B - Kunde","pillar":"Native","track":"Kunde","platform":"TikTok + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk","timing":"for","channel":"native"},
@@ -1237,17 +1326,17 @@
       {"id":"X-2","title":"7 Products, One Afternoon Of Content","source":"X-repost","type":"One-off","family":"X - Repost","pillar":"Native","track":"Brand/Investor","platform":"X","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"begge"},
       {"id":"X-4","title":"Can Native Do A Health Brand Without Making It Cringe?","source":"X-repost","type":"One-off","family":"X - Repost","pillar":"Native","track":"Brand/Investor","platform":"X + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk","timing":"for","channel":"native"},
       {"id":"X-6","title":"Native vs Founder Rules","source":"X-repost","type":"Serie","family":"X - Repost","pillar":"Native","track":"Brand/Investor","platform":"X + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk","timing":"for","channel":"begge"},
-      {"id":"USA-1","title":"Norway Team Travel Copy","source":"USA-plan","type":"One-off","family":"Travel/Brand","pillar":"Norge + USA","track":"Brand","platform":"TikTok + X","canFilm":"Ja","requiresSf":"Delvis","priority":"Film nå","timing":"tur","channel":"oskar"},
+      {"id":"USA-1","title":"Norway Team Travel Copy","source":"USA-plan","type":"One-off","family":"Travel/Brand","pillar":"Norge + USA","track":"Brand","platform":"TikTok + X","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"oskar"},
       {"id":"USA-2","title":"Day X/90 Building Native In America","source":"USA-plan","type":"Serie","family":"USA-logg","pillar":"Native + USA","track":"Brand/Investor","platform":"TikTok + X","canFilm":"Ja","requiresSf":"Ja","priority":"Film nå","timing":"usa","channel":"begge"},
       {"id":"USA-3","title":"Norwegian Tests American Business Culture","source":"USA-plan","type":"Serie","family":"USA-logg","pillar":"Norge + USA","track":"Brand","platform":"TikTok","canFilm":"Ja","requiresSf":"Ja","priority":"Film nå","timing":"usa","channel":"oskar"},
       {"id":"USA-4","title":"SMB Before/After Native In The US","source":"USA-plan","type":"Serie","family":"Kunde-proof","pillar":"Native","track":"Kunde","platform":"TikTok + LinkedIn","canFilm":"Ja","requiresSf":"Ja","priority":"Film nå","timing":"usa","channel":"native"},
       {"id":"USA-5","title":"Milestone As Customer Proof","source":"USA-plan","type":"Serie","family":"Founder proof","pillar":"Native","track":"Investor/Kunde","platform":"LinkedIn + X","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk","timing":"for","channel":"native"},
       {"id":"USA-6","title":"Norwegian Tries To Sell To Americans","source":"USA-plan","type":"Serie","family":"USA-salg","pillar":"Native + USA","track":"Brand/Kunde","platform":"TikTok + X","canFilm":"Ja","requiresSf":"Ja","priority":"Film nå","timing":"usa","channel":"begge"},
-      {"id":"USA-7","title":"Public Bet: Native US Growth","source":"USA-plan","type":"One-off/Serie","family":"Founder proof","pillar":"Native","track":"Brand/Investor","platform":"X + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk","timing":"for","channel":"begge"},
+      {"id":"USA-7","title":"Public Bet: Native US Growth","source":"USA-plan","type":"One-off/Serie","family":"Founder proof","pillar":"Native","track":"Brand/Investor","platform":"X + LinkedIn","canFilm":"Ja","requiresSf":"Ja","priority":"Sterk","timing":"usa","channel":"oskar"},
       {"id":"USA-8","title":"Drop A US Business In The Comments","source":"USA-plan","type":"Serie","family":"Kunde-proof","pillar":"Native","track":"Kunde/Brand","platform":"TikTok + X","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"begge"},
-      {"id":"USA-9","title":"ChatGPT vs Native Side By Side","source":"USA-plan","type":"Serie","family":"Product proof","pillar":"Native + AI","track":"Kunde","platform":"TikTok + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"native"},
-      {"id":"USA-10","title":"Spot The AI","source":"USA-plan","type":"Serie","family":"Product proof","pillar":"Native + AI","track":"Brand/Kunde","platform":"TikTok + X","canFilm":"Ja","requiresSf":"Nei","priority":"Film nå","timing":"for","channel":"begge"},
-      {"id":"USA-11","title":"Norwegian To English Rebuild","source":"USA-plan","type":"Serie","family":"Product proof","pillar":"Native","track":"Kunde/Brand","platform":"TikTok + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk","timing":"for","channel":"native"},
+      {"id":"USA-9","title":"ChatGPT vs Native Side By Side","source":"USA-plan","type":"Serie","family":"Product proof","pillar":"Native + AI","track":"Kunde","platform":"TikTok + LinkedIn","canFilm":"Ja","requiresSf":"Ja","priority":"Film nå","timing":"usa","channel":"native"},
+      {"id":"USA-10","title":"Spot The AI","source":"USA-plan","type":"Serie","family":"Product proof","pillar":"Native + AI","track":"Brand/Kunde","platform":"TikTok + X","canFilm":"Ja","requiresSf":"Ja","priority":"Film nå","timing":"usa","channel":"native"},
+      {"id":"USA-11","title":"Norwegian To English Rebuild","source":"USA-plan","type":"Serie","family":"Product proof","pillar":"Native","track":"Kunde/Brand","platform":"TikTok + LinkedIn","canFilm":"Ja","requiresSf":"Nei","priority":"Sterk","timing":"for","channel":"begge"},
       {"id":"USA-12","title":"Niche Edit Compilation","source":"USA-plan","type":"Serie","family":"Social proof","pillar":"Oskar","track":"Brand","platform":"TikTok","canFilm":"Ja","requiresSf":"Nei","priority":"Vurder","timing":"for","channel":"oskar"},
       {"id":"USA-13","title":"Europe Is Where Businesses Go To Die","source":"USA-plan","type":"One-off","family":"Rage bait","pillar":"Norge + USA","track":"Brand","platform":"X + TikTok","canFilm":"Ja","requiresSf":"Ja","priority":"Vurder","timing":"usa","channel":"oskar","risk":"Høy"},
       {"id":"USA-14","title":"Skattesmell Founder Lesson","source":"USA-plan","type":"One-off","family":"Founder reality","pillar":"Oskar","track":"Brand/Investor","platform":"TikTok + X","canFilm":"Ja","requiresSf":"Nei","priority":"Vurder","timing":"for","channel":"oskar"},
@@ -1494,7 +1583,7 @@
           "Reaksjonen må ikke scripts.",
           "Samtykke for filming inne."
         ],
-        next: "Velg 3 SMB-er i Norge og prepp 5 poster for hver første opptaksdag."
+        next: "Bruk som USA-gateformat. Finn 3 amerikanske SMB-er og prepp 5 poster for hver før dere går ut."
       },
       "R2-10": {
         concept: "Eieren bruker Native uten tutorial. Hvis de trenger hjelp, har produktet friksjon.",
@@ -1740,7 +1829,7 @@
           "Faktisk reisedag eller ekte prepdag.",
           "Målet for turen må være konkret."
         ],
-        next: "Film som intro til USA-perioden når reisen starter."
+        next: "Spill inn før reise som intro til USA-perioden. Post først når USA-fortellingen starter."
       },
       "USA-2": {
         concept: "Dag X/90-teller som dokumenterer ett bevis per dag fra USA-perioden.",
@@ -1888,7 +1977,7 @@
           "Målet må være realistisk og målbart.",
           "Ikke lag konsekvens som blir cringe eller utrygg."
         ],
-        next: "Velg ett tall og én dato før publisering."
+        next: "Bruk når Oskar er i USA og kan knytte målet til faktisk USA-satsing."
       },
       "USA-8": {
         concept: "Be publikum droppe amerikanske businesser i kommentarfeltet. Oskar kjører dem gjennom Native i neste video.",
@@ -1937,7 +2026,7 @@
           "ChatGPT-testen må være fair.",
           "Ikke manipuler output etterpå."
         ],
-        next: "Velg én tydelig SMB eller founder-site."
+        next: "Film/post i USA med en business/founder-site som gjør US-vinkelen tydelig."
       },
       "USA-10": {
         concept: "Spot the AI: vis to posts og la publikum gjette hvilken som er Native.",
@@ -1962,7 +2051,7 @@
           "Må være fair og ikke misvisende.",
           "Avslør tydelig hva som er hva."
         ],
-        next: "Lag med ekte kunde/output."
+        next: "Post i USA som produktbevis for seerne som følger USA-satsingen."
       },
       "USA-11": {
         concept: "Reproduser en norsk vinnerpost på engelsk og vis hvordan Native tilpasser den til US-tone.",
@@ -1986,7 +2075,7 @@
           "Bruk faktisk norsk post som fungerte.",
           "Ikke påstå US-resultat før det er testet."
         ],
-        next: "Velg 3 norske posts med best historikk."
+        next: "Finn og bygg før reise. Hold tilbake publisering til USA, slik at den føles relevant for nye seere."
       },
       "USA-12": {
         concept: "Niche edit-compilation: raske klipp av små businesser/nicher Native kan lage innhold for.",
@@ -2293,6 +2382,11 @@
 	    const LOCAL_OVERRIDES_STORAGE_KEY = "oskarLocalIdeaOverridesV1";
 	    const LOCAL_REMOVED_STORAGE_KEY = "oskarLocalRemovedIdeasV1";
 	    const TEAM_BASE_URL = "https://kodskar.github.io/oskar-content-dashboard-team/";
+	    const SUPABASE_CONFIG = {
+	      url: "https://qeaspktdfmsbudorvnha.supabase.co",
+	      publishableKey: "sb_publishable_GmzTaNz9MpGe9UX0kTwiaA_V7i70jJ6",
+	      table: "content_ideas"
+	    };
 	    const TIMING_OPTIONS = [
 	      { id: "for", title: "🇳🇴 Før reise", short: "Før reise" },
 	      { id: "tur", title: "✈️ På turen", short: "På turen" },
@@ -2313,6 +2407,14 @@
 	    let localIdeas = JSON.parse(localStorage.getItem(LOCAL_IDEAS_STORAGE_KEY) || "[]");
 	    let localOverrides = JSON.parse(localStorage.getItem(LOCAL_OVERRIDES_STORAGE_KEY) || "{}");
 	    let removedIds = new Set(JSON.parse(localStorage.getItem(LOCAL_REMOVED_STORAGE_KEY) || "[]"));
+	    let supabaseClient = null;
+	    let authSession = null;
+	    let teamWriteAllowed = false;
+	    let teamWriteChecked = false;
+	    let teamRole = "";
+	    let remoteIdeas = null;
+	    let remoteLoadError = "";
+	    let saveInProgress = false;
 	    let sharedOrder = parseSharedOrder();
 	    let activeOrder = normalizeOrder(sharedOrder || JSON.parse(localStorage.getItem(ORDER_STORAGE_KEY) || "null") || defaultOrder());
 	    let hasSharedOrder = Boolean(sharedOrder);
@@ -2324,6 +2426,69 @@
 	      return "Ideer";
 	    }
 
+	    function supabaseConfigured() {
+	      return Boolean(SUPABASE_CONFIG.url && SUPABASE_CONFIG.publishableKey && window.supabase);
+	    }
+
+	    function usingRemoteData() {
+	      return Array.isArray(remoteIdeas);
+	    }
+
+	    function canWriteShared() {
+	      return Boolean(usingRemoteData() && authSession && teamWriteAllowed);
+	    }
+
+	    function normalizeStatus(value) {
+	      return ["idea", "ready", "filmed", "published"].includes(value) ? value : "idea";
+	    }
+
+	    function statusLabel(value) {
+	      return {
+	        idea: "Idé",
+	        ready: "Klar",
+	        filmed: "Filmet",
+	        published: "Publisert"
+	      }[normalizeStatus(value)];
+	    }
+
+	    function normalizeStats(stats) {
+	      if (!stats || typeof stats !== "object") return {};
+	      return {
+	        tiktok: stats.tiktok || "",
+	        x: stats.x || "",
+	        linkedin: stats.linkedin || "",
+	        reposts: stats.reposts || "",
+	        notes: stats.notes || ""
+	      };
+	    }
+
+	    function normalizeIdeaRecord(record) {
+	      const brief = record.brief && typeof record.brief === "object" ? record.brief : {};
+	      return {
+	        id: record.id,
+	        title: record.title || "Uten tittel",
+	        source: record.source || "Dashboard",
+	        type: record.type || "One-off",
+	        family: record.family || "Ny idé",
+	        pillar: record.pillar || "Native",
+	        track: record.track || "Brand/Kunde",
+	        platform: record.platform || "TikTok + X",
+	        canFilm: record.can_film || record.canFilm || "Ja",
+	        requiresSf: record.requires_sf || record.requiresSf || "Nei",
+	        priority: record.priority || "Vurder",
+	        timing: record.timing || "for",
+	        channel: record.channel || "begge",
+	        risk: record.risk || "",
+	        status: normalizeStatus(record.status),
+	        stats: normalizeStats(record.stats),
+	        sortGroup: record.sort_group || (record.priority === "Film nå" ? "next" : "later"),
+	        orderRank: Number.isFinite(Number(record.order_rank)) ? Number(record.order_rank) : 999,
+	        isArchived: Boolean(record.is_archived),
+	        localBrief: brief.concept || record.localBrief || "",
+	        brief
+	      };
+	    }
+
 	    function saveLocalState() {
 	      localStorage.setItem(LOCAL_IDEAS_STORAGE_KEY, JSON.stringify(localIdeas));
 	      localStorage.setItem(LOCAL_OVERRIDES_STORAGE_KEY, JSON.stringify(localOverrides));
@@ -2331,9 +2496,12 @@
 	    }
 
 	    function currentIdeas() {
+	      if (usingRemoteData()) {
+	        return remoteIdeas.filter(idea => !idea.isArchived);
+	      }
 	      return [...ideas, ...localIdeas]
 	        .filter(idea => !removedIds.has(idea.id))
-	        .map(idea => ({ ...idea, ...(localOverrides[idea.id] || {}) }));
+	        .map(idea => ({ status: "idea", stats: {}, ...idea, ...(localOverrides[idea.id] || {}) }));
 	    }
 
 	    function timingLabel(value) {
@@ -2345,6 +2513,9 @@
 	    }
 
 	    function briefFor(idea) {
+	      if (idea.brief && typeof idea.brief === "object" && Object.keys(idea.brief).length) {
+	        return idea.localBrief ? { ...idea.brief, concept: idea.localBrief } : idea.brief;
+	      }
 	      const base = briefs[idea.id];
 	      if (base) return idea.localBrief ? { ...base, concept: idea.localBrief } : base;
 	      if (!idea.localBrief) return null;
@@ -2362,6 +2533,18 @@
 	    }
 
 	    function defaultOrder() {
+	      if (usingRemoteData()) {
+	        const sorted = currentIdeas().slice().sort((a, b) => {
+	          const rankA = Number.isFinite(a.orderRank) ? a.orderRank : 999;
+	          const rankB = Number.isFinite(b.orderRank) ? b.orderRank : 999;
+	          return rankA - rankB || a.title.localeCompare(b.title);
+	        });
+	        const next = sorted.filter(idea => idea.sortGroup === "next").map(idea => idea.id);
+	        return {
+	          next,
+	          later: sorted.filter(idea => idea.sortGroup !== "next").map(idea => idea.id)
+	        };
+	      }
 	      const allIds = visibleIdeaIds();
 	      const next = currentIdeas()
 	        .filter(idea => idea.priority === "Film nå")
@@ -2408,6 +2591,7 @@
 	    }
 
 	    function saveOrder() {
+	      if (usingRemoteData()) return;
 	      localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(activeOrder));
 	    }
 
@@ -2433,11 +2617,266 @@
 
 	    function matchesFilters(idea) {
 	      const brief = briefFor(idea) || {};
+	      const stats = normalizeStats(idea.stats);
 	      const briefText = [brief.concept, brief.context, brief.say, brief.make, brief.hooks, brief.real, brief.targets, brief.cut, brief.next].flat().filter(Boolean).join(" ");
-	      const haystack = [idea.id, idea.title, idea.source, idea.type, idea.family, idea.pillar, idea.track, idea.platform, idea.priority, idea.canFilm, idea.requiresSf, idea.timing, timingLabel(idea.timing), idea.channel, channelLabel(idea.channel), briefText].join(" ").toLowerCase();
+	      const statsText = Object.values(stats).filter(Boolean).join(" ");
+	      const haystack = [idea.id, idea.title, idea.source, idea.type, idea.family, idea.pillar, idea.track, idea.platform, idea.priority, idea.canFilm, idea.requiresSf, idea.timing, timingLabel(idea.timing), idea.channel, channelLabel(idea.channel), idea.status, statusLabel(idea.status), statsText, briefText].join(" ").toLowerCase();
 	      const matchesSearch = !filters.search || haystack.includes(filters.search.toLowerCase());
 	      const matchesChannel = filters.channel === "alle" || idea.channel === filters.channel || idea.channel === "begge";
 	      return matchesSearch && matchesChannel;
+	    }
+
+	    function renderAuthStrip() {
+	      const target = document.getElementById("authStrip");
+	      if (!target) return;
+	      if (!supabaseConfigured()) {
+	        target.innerHTML = `
+	          <span><strong>Lokal modus.</strong> Siden fungerer, men endringer lagres bare i denne browseren til Supabase er koblet på.</span>
+	          <span class="auth-actions"><span>Felles redigering: ikke konfigurert</span></span>
+	        `;
+	        return;
+	      }
+	      if (remoteLoadError) {
+	        target.innerHTML = `
+	          <span><strong>Fallback-visning.</strong> Supabase svarte ikke, så siden viser hardkodede ideer.</span>
+	          <span class="auth-actions"><button class="ghost-btn" id="retryRemoteLoad" type="button">Prøv igjen</button></span>
+	        `;
+	        document.getElementById("retryRemoteLoad").addEventListener("click", loadRemoteIdeas);
+	        return;
+	      }
+	      if (!usingRemoteData()) {
+	        target.innerHTML = `<span><strong>Kobler til felles database...</strong></span>`;
+	        return;
+	      }
+	      if (!authSession) {
+	        target.innerHTML = `
+	          <span><strong>Du er ikke innlogget.</strong> Du kan lese alt, men må logge inn for å endre. Endringer etter innlogging lagres for hele teamet.</span>
+	          <span class="auth-actions">
+	            <input id="loginEmail" type="email" placeholder="din e-post">
+	            <button class="ghost-btn" id="sendMagicLink" type="button">Send magisk lenke</button>
+	          </span>
+	        `;
+	        document.getElementById("sendMagicLink").addEventListener("click", sendMagicLink);
+	        return;
+	      }
+	      const email = authSession.user?.email || "innlogget bruker";
+	      if (!teamWriteChecked) {
+	        target.innerHTML = `
+	          <span><strong>Sjekker redigeringstilgang.</strong> Innlogget som ${escapeHtml(email)}.</span>
+	          <span class="auth-actions">
+	            <button class="ghost-btn" id="refreshRemoteData" type="button">Oppdater</button>
+	            <button class="ghost-btn" id="signOut" type="button">Logg ut</button>
+	          </span>
+	        `;
+	        document.getElementById("refreshRemoteData").addEventListener("click", loadRemoteIdeas);
+	        document.getElementById("signOut").addEventListener("click", signOut);
+	        return;
+	      }
+	      if (!teamWriteAllowed) {
+	        target.innerHTML = `
+	          <span><strong>Lesetilgang.</strong> Innlogget som ${escapeHtml(email)}, men denne e-posten er ikke på teamlisten. Be Oskar legge den inn i Supabase for å redigere.</span>
+	          <span class="auth-actions">
+	            <button class="ghost-btn" id="refreshRemoteData" type="button">Oppdater</button>
+	            <button class="ghost-btn" id="signOut" type="button">Logg ut</button>
+	          </span>
+	        `;
+	        document.getElementById("refreshRemoteData").addEventListener("click", loadRemoteIdeas);
+	        document.getElementById("signOut").addEventListener("click", signOut);
+	        return;
+	      }
+	      target.innerHTML = `
+	        <span><strong>Felles redigering er på.</strong> Innlogget som ${escapeHtml(email)}${teamRole ? ` (${escapeHtml(teamRole)})` : ""}. Endringer lagres for hele teamet.</span>
+	        <span class="auth-actions">
+	          <button class="ghost-btn" id="refreshRemoteData" type="button">Oppdater</button>
+	          <button class="ghost-btn" id="signOut" type="button">Logg ut</button>
+	        </span>
+	      `;
+	      document.getElementById("refreshRemoteData").addEventListener("click", loadRemoteIdeas);
+	      document.getElementById("signOut").addEventListener("click", signOut);
+	    }
+
+	    async function sendMagicLink() {
+	      const email = document.getElementById("loginEmail")?.value?.trim();
+	      if (!email) {
+	        setShareStatus("Skriv inn e-post først");
+	        return;
+	      }
+	      const { error } = await supabaseClient.auth.signInWithOtp({
+	        email,
+	        options: {
+	          shouldCreateUser: false,
+	          emailRedirectTo: window.location.origin + window.location.pathname
+	        }
+	      });
+	      if (error) {
+	        setShareStatus(`Kunne ikke sende lenke: ${formatSupabaseError(error)}`);
+	        return;
+	      }
+	      setShareStatus("Magisk lenke sendt. Sjekk e-posten din.");
+	    }
+
+	    async function signOut() {
+	      if (!supabaseClient) return;
+	      await supabaseClient.auth.signOut();
+	      authSession = null;
+	      teamWriteAllowed = false;
+	      teamWriteChecked = false;
+	      teamRole = "";
+	      renderAll();
+	    }
+
+	    async function loadTeamMembership() {
+	      teamWriteAllowed = false;
+	      teamWriteChecked = false;
+	      teamRole = "";
+	      if (!supabaseClient || !authSession?.user?.email) return;
+	      const { data, error } = await supabaseClient
+	        .from("content_team_members")
+	        .select("email, role")
+	        .eq("email", authSession.user.email)
+	        .limit(1);
+	      teamWriteChecked = true;
+	      if (error) {
+	        teamWriteAllowed = false;
+	        teamRole = "";
+	        return;
+	      }
+	      const membership = (data || [])[0];
+	      teamWriteAllowed = Boolean(membership);
+	      teamRole = membership?.role || "";
+	    }
+
+	    function requireWriteAccess() {
+	      if (!usingRemoteData()) return true;
+	      if (canWriteShared()) return true;
+	      if (authSession && teamWriteChecked && !teamWriteAllowed) {
+	        setShareStatus("Du er innlogget, men e-posten er ikke på teamlisten.");
+	        renderAuthStrip();
+	        return false;
+	      }
+	      if (authSession && !teamWriteChecked) {
+	        setShareStatus("Sjekker om e-posten din har redigeringstilgang.");
+	        renderAuthStrip();
+	        return false;
+	      }
+	      setShareStatus("Logg inn først. Du kan lese, men ikke endre felles dashboard.");
+	      renderAuthStrip();
+	      return false;
+	    }
+
+	    function dbRowFromIdea(idea) {
+	      const brief = briefFor(idea) || {};
+	      return {
+	        id: idea.id,
+	        title: idea.title,
+	        source: idea.source,
+	        type: idea.type,
+	        family: idea.family,
+	        pillar: idea.pillar,
+	        track: idea.track,
+	        platform: idea.platform,
+	        can_film: idea.canFilm,
+	        requires_sf: idea.requiresSf,
+	        priority: idea.priority,
+	        timing: idea.timing,
+	        channel: idea.channel,
+	        risk: idea.risk || null,
+	        status: normalizeStatus(idea.status),
+	        stats: normalizeStats(idea.stats),
+	        sort_group: laneOf(idea.id),
+	        order_rank: rankMap().get(idea.id) || 999,
+	        brief: brief,
+	        is_archived: Boolean(idea.isArchived)
+	      };
+	    }
+
+	    function dbFieldsFromMeta(fields) {
+	      const row = {};
+	      if ("title" in fields) row.title = fields.title;
+	      if ("timing" in fields) row.timing = fields.timing;
+	      if ("channel" in fields) row.channel = fields.channel;
+	      if ("risk" in fields) row.risk = fields.risk || null;
+	      if ("status" in fields) row.status = normalizeStatus(fields.status);
+	      if ("stats" in fields) row.stats = normalizeStats(fields.stats);
+	      if ("localBrief" in fields) row.brief = { concept: fields.localBrief || "" };
+	      row.updated_at = new Date().toISOString();
+	      return row;
+	    }
+
+	    async function persistIdeaFields(id, fields) {
+	      if (!usingRemoteData()) return;
+	      const row = dbFieldsFromMeta(fields);
+	      if ("localBrief" in fields) {
+	        const currentBrief = { ...(briefFor(ideaById(id)) || {}) };
+	        row.brief = { ...currentBrief, concept: fields.localBrief || "" };
+	      }
+	      const { error } = await supabaseClient
+	        .from(SUPABASE_CONFIG.table)
+	        .update(row)
+	        .eq("id", id);
+	      if (error) throw error;
+	    }
+
+	    async function persistOrder() {
+	      if (!usingRemoteData()) return;
+	      if (!requireWriteAccess()) return;
+	      const updates = [...activeOrder.next, ...activeOrder.later].map((id, index) => {
+	        const sortGroup = activeOrder.next.includes(id) ? "next" : "later";
+	        return supabaseClient
+	          .from(SUPABASE_CONFIG.table)
+	          .update({ sort_group: sortGroup, order_rank: index + 1, updated_at: new Date().toISOString() })
+	          .eq("id", id);
+	      });
+	      const results = await Promise.all(updates);
+	      const failed = results.find(result => result.error);
+	      if (failed) throw failed.error;
+	      setShareStatus("Rekkefølge lagret for teamet");
+	    }
+
+	    async function loadRemoteIdeas() {
+	      if (!supabaseConfigured()) {
+	        teamWriteAllowed = false;
+	        teamWriteChecked = false;
+	        teamRole = "";
+	        renderAll();
+	        return;
+	      }
+	      try {
+	        if (!supabaseClient) {
+	          supabaseClient = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.publishableKey, {
+	            auth: { autoRefreshToken: true, persistSession: true, detectSessionInUrl: true }
+	          });
+	          supabaseClient.auth.onAuthStateChange((_event, session) => {
+	            authSession = session;
+	            loadTeamMembership().finally(renderAll);
+	          });
+	        }
+	        const { data: sessionData } = await supabaseClient.auth.getSession();
+	        authSession = sessionData.session;
+	        await loadTeamMembership();
+	        const { data, error } = await supabaseClient
+	          .from(SUPABASE_CONFIG.table)
+	          .select("*")
+	          .eq("is_archived", false)
+	          .order("sort_group", { ascending: false })
+	          .order("order_rank", { ascending: true });
+	        if (error) throw error;
+	        remoteIdeas = (data || []).map(normalizeIdeaRecord);
+	        remoteLoadError = "";
+	        const orderFromUrl = hasSharedOrder && sharedOrder;
+	        activeOrder = normalizeOrder(orderFromUrl || defaultOrder());
+	        hasSharedOrder = Boolean(orderFromUrl);
+	        renderAll();
+	      } catch (error) {
+	        remoteLoadError = error.message || "Supabase-feil";
+	        remoteIdeas = null;
+	        teamWriteAllowed = false;
+	        teamWriteChecked = false;
+	        teamRole = "";
+	        activeOrder = normalizeOrder((hasSharedOrder && sharedOrder) || JSON.parse(localStorage.getItem(ORDER_STORAGE_KEY) || "null") || defaultOrder());
+	        renderAll();
+	        setShareStatus("Supabase kunne ikke lastes. Viser fallback-data.");
+	      }
 	    }
 
 	    function makeToolbar(targetId) {
@@ -2473,8 +2912,12 @@
 	          renderAll();
 	        });
 	      });
-	      document.getElementById("addIdea").addEventListener("click", () => openIdeaForm());
+	      document.getElementById("addIdea").addEventListener("click", () => {
+	        if (!requireWriteAccess()) return;
+	        openIdeaForm();
+	      });
 	      document.getElementById("toggleEditMode").addEventListener("click", () => {
+	        if (!requireWriteAccess()) return;
 	        editMode = !editMode;
 	        document.getElementById("toggleEditMode").textContent = editMode ? "Rediger på" : "Rediger av";
 	        document.getElementById("toggleEditMode").classList.toggle("active", editMode);
@@ -2501,12 +2944,21 @@
 	      }
 	    }
 
+	    function formatSupabaseError(error) {
+	      const message = error?.message || "Ukjent Supabase-feil";
+	      if (message.toLowerCase().includes("row-level security")) {
+	        return "Du er innlogget, men e-posten er ikke på teamlisten i Supabase.";
+	      }
+	      return message;
+	    }
+
 	    async function copyTeamLink() {
 	      await writeClipboard(teamLink());
 	      setShareStatus("Lenke kopiert - send den til teamet");
 	    }
 
 	    function resetOrder() {
+	      sharedOrder = null;
 	      activeOrder = normalizeOrder(defaultOrder());
 	      hasSharedOrder = false;
 	      saveOrder();
@@ -2515,10 +2967,19 @@
 	    }
 
 	    function adoptSharedOrder() {
+	      if (usingRemoteData() && !requireWriteAccess()) return;
+	      sharedOrder = null;
 	      hasSharedOrder = false;
 	      saveOrder();
 	      renderAll();
-	      setShareStatus("Delt rekkefølge er lagret i denne browseren");
+	      if (usingRemoteData()) {
+	        persistOrder()
+	          .then(() => loadRemoteIdeas())
+	          .then(() => setShareStatus("Delt rekkefølge er lagret for teamet"))
+	          .catch(error => setShareStatus(`Kunne ikke lagre rekkefølge: ${formatSupabaseError(error)}`));
+	      } else {
+	        setShareStatus("Delt rekkefølge er lagret i denne browseren");
+	      }
 	    }
 
 	    function cardHtml(idea, options = {}) {
@@ -2531,6 +2992,8 @@
 	      const timingAttr = options.timing ? `data-timing="${options.timing}"` : "";
 	      const channelName = channelLabel(idea.channel);
 	      const riskBadge = idea.risk ? `<span class="risk-badge">Risiko</span>` : "";
+	      const status = normalizeStatus(idea.status);
+	      const statusBadge = `<span class="status-badge status-${status}">${statusLabel(status)}</span>`;
 	      const editControls = editMode ? `<button type="button" class="tiny-btn" data-edit="${idea.id}">Endre</button><button type="button" class="tiny-btn" data-remove="${idea.id}">Fjern</button>` : "";
 	      const moveControls = sortable ? `
 	        <button type="button" class="move-btn" data-move="${idea.id}" data-direction="-1" aria-label="Flytt opp">↑</button>
@@ -2539,7 +3002,7 @@
 	      return `
 	        <article class="idea-card ${selected ? "selected" : ""}" data-id="${idea.id}" ${options.laneId ? `data-lane="${options.laneId}"` : ""} ${timingAttr} ${sortable ? `draggable="true"` : ""} role="button" tabindex="0">
 	          <div class="card-top">
-	            <span class="card-meta">${rank}<span class="id">${idea.id}</span><span class="channel-badge channel-${idea.channel}">${channelName}</span>${riskBadge}${dragHandle}</span>
+	            <span class="card-meta">${rank}<span class="id">${idea.id}</span><span class="channel-badge channel-${idea.channel}">${channelName}</span>${statusBadge}${riskBadge}${dragHandle}</span>
 	            <span class="card-actions">${moveControls}${editControls}<button type="button" class="quick-select ${selected ? "on" : ""}" data-select="${idea.id}" aria-pressed="${selected ? "true" : "false"}">${selected ? "Valgt" : "+ Velg"}</button></span>
 	          </div>
 	          <h4>${escapeHtml(idea.title)}</h4>
@@ -2570,6 +3033,7 @@
 
     function briefText(idea) {
       const brief = briefFor(idea);
+      const stats = normalizeStats(idea.stats);
       if (!brief) return `${idea.id} - ${idea.title}`;
       const sections = [
         ["Hvem dette er:", brief.context],
@@ -2583,10 +3047,13 @@
       return [
         `${idea.id} - ${idea.title}`,
         `Prioritet: ${idea.priority}`,
+        `Status: ${statusLabel(idea.status)}`,
         `Tid: ${timingLabel(idea.timing)}`,
         `Kanal: ${channelLabel(idea.channel)}`,
         `Plattform: ${idea.platform}`,
         `Pilar/spor: ${idea.pillar} / ${idea.track}`,
+        `Stats: TikTok ${stats.tiktok || "-"} / X ${stats.x || "-"} / LinkedIn ${stats.linkedin || "-"} / Reposts ${stats.reposts || "-"}`,
+        stats.notes ? `Stats-notat: ${stats.notes}` : "",
         "",
         `Konsept: ${brief.concept}`,
         ...sections.flatMap(([title, items]) => items && items.length ? ["", title, ...items.map(item => `- ${item}`)] : []),
@@ -2634,6 +3101,7 @@
 	    }
 
 	    function moveIdea(id, direction) {
+	      if (!requireWriteAccess()) return;
 	      const laneId = activeOrder.next.includes(id) ? "next" : activeOrder.later.includes(id) ? "later" : null;
 	      if (!laneId) return;
 	      const list = activeOrder[laneId];
@@ -2656,9 +3124,18 @@
 	      hasSharedOrder = false;
 	      saveOrder();
 	      renderAll();
+	      if (usingRemoteData()) {
+	        persistOrder()
+	          .then(() => loadRemoteIdeas())
+	          .catch(error => setShareStatus(`Kunne ikke lagre rekkefølge: ${formatSupabaseError(error)}`));
+	      }
 	    }
 
 	    function setIdeaMeta(id, fields) {
+	      if (usingRemoteData()) {
+	        remoteIdeas = remoteIdeas.map(idea => idea.id === id ? { ...idea, ...fields } : idea);
+	        return;
+	      }
 	      const localIndex = localIdeas.findIndex(idea => idea.id === id);
 	      if (localIndex >= 0) {
 	        localIdeas[localIndex] = { ...localIdeas[localIndex], ...fields };
@@ -2668,12 +3145,23 @@
 	    }
 
 	    function updateIdeaMeta(id, fields) {
+	      if (usingRemoteData()) {
+	        if (!requireWriteAccess()) return;
+	        setIdeaMeta(id, fields);
+	        renderAll();
+	        persistIdeaFields(id, fields)
+	          .then(() => loadRemoteIdeas())
+	          .then(() => setShareStatus("Endring lagret for teamet"))
+	          .catch(error => setShareStatus(`Kunne ikke lagre: ${formatSupabaseError(error)}`));
+	        return;
+	      }
 	      setIdeaMeta(id, fields);
 	      saveLocalState();
 	      renderAll();
 	    }
 
 	    function moveDraggedIdea(id, targetLane, beforeId = null, targetTiming = null) {
+	      if (!requireWriteAccess()) return;
 	      if (!id || !targetLane || !activeOrder[targetLane]) return;
 	      activeOrder.next = activeOrder.next.filter(item => item !== id);
 	      activeOrder.later = activeOrder.later.filter(item => item !== id);
@@ -2689,6 +3177,11 @@
 	      saveLocalState();
 	      saveOrder();
 	      renderAll();
+	      if (usingRemoteData()) {
+	        persistOrder()
+	          .then(() => loadRemoteIdeas())
+	          .catch(error => setShareStatus(`Kunne ikke lagre rekkefølge: ${formatSupabaseError(error)}`));
+	      }
 	    }
 
 	    function renderFunnel() {
@@ -2757,12 +3250,14 @@
       const idea = ideaById(id);
       if (!idea) return;
       currentIdeaId = id;
+      const stats = normalizeStats(idea.stats);
       document.getElementById("modalId").textContent = idea.id;
 	      document.getElementById("modalTitle").textContent = idea.title;
 	      document.getElementById("modalTags").innerHTML = `
 	        <span class="tag">${bucketLabel(idea)}</span>
 	        <span class="tag">${timingLabel(idea.timing)}</span>
 	        <span class="channel-badge channel-${idea.channel}">${channelLabel(idea.channel)}</span>
+	        <span class="status-badge status-${normalizeStatus(idea.status)}">${statusLabel(idea.status)}</span>
 	        ${idea.risk ? `<span class="risk-badge">Risiko</span>` : ""}
 	      `;
 	      document.getElementById("modalStatus").textContent = `${idea.platform} · ${idea.type}`;
@@ -2782,6 +3277,13 @@
 	        bulletSection("Hva som må være ekte", brief.real),
         bulletSection("Neste targets", brief.targets),
         bulletSection("Kutt / hold enkelt", brief.cut),
+        bulletSection("Stats", [
+          `TikTok: ${stats.tiktok || "-"}`,
+          `X: ${stats.x || "-"}`,
+          `LinkedIn: ${stats.linkedin || "-"}`,
+          `Reposts/kommentarer: ${stats.reposts || "-"}`,
+          stats.notes ? `Notat: ${stats.notes}` : ""
+        ].filter(Boolean)),
 	        bulletSection("Neste steg", [brief.next])
 	      ].join("");
 	      updateModalSelectionButton(id);
@@ -2802,7 +3304,9 @@
 	        requiresSf: idea.requiresSf,
 	        priority: idea.priority,
 	        timing: idea.timing,
-	        channel: idea.channel
+	        channel: idea.channel,
+	        status: normalizeStatus(idea.status),
+	        stats: normalizeStats(idea.stats)
 	      };
 	      if (idea.localBrief) object.localBrief = idea.localBrief;
 	      if (idea.risk) object.risk = idea.risk;
@@ -2813,7 +3317,15 @@
 	      const existing = id ? ideaById(id) : null;
 	      const timing = document.getElementById("ideaTimingInput").value;
 	      const channel = document.getElementById("ideaChannelInput").value;
+	      const status = document.getElementById("ideaStatusInput").value;
 	      const localBrief = document.getElementById("ideaBriefInput").value.trim();
+	      const stats = {
+	        tiktok: document.getElementById("statsTiktokInput").value.trim(),
+	        x: document.getElementById("statsXInput").value.trim(),
+	        linkedin: document.getElementById("statsLinkedinInput").value.trim(),
+	        reposts: document.getElementById("statsRepostsInput").value.trim(),
+	        notes: document.getElementById("statsNotesInput").value.trim()
+	      };
 	      return {
 	        ...(existing || {
 	          id,
@@ -2831,6 +3343,8 @@
 	        title: document.getElementById("ideaTitleInput").value.trim() || "Ny idé",
 	        timing,
 	        channel,
+	        status,
+	        stats,
 	        localBrief
 	      };
 	    }
@@ -2844,23 +3358,73 @@
 
 	    function openIdeaForm(id = "") {
 	      const idea = id ? ideaById(id) : null;
+	      const stats = normalizeStats(idea?.stats);
 	      document.getElementById("editIdeaId").value = id;
 	      document.getElementById("formModeTag").textContent = idea ? "Endre" : "Ny idé";
 	      document.getElementById("ideaFormTitle").textContent = idea ? "Endre idé" : "Legg til idé";
 	      document.getElementById("ideaTitleInput").value = idea ? idea.title : "";
 	      document.getElementById("ideaTimingInput").value = idea ? idea.timing : "for";
 	      document.getElementById("ideaChannelInput").value = idea ? idea.channel : "begge";
+	      document.getElementById("ideaStatusInput").value = idea ? normalizeStatus(idea.status) : "idea";
 	      document.getElementById("ideaBriefInput").value = idea ? (idea.localBrief || (briefFor(idea) || {}).concept || "") : "";
+	      document.getElementById("statsTiktokInput").value = stats.tiktok || "";
+	      document.getElementById("statsXInput").value = stats.x || "";
+	      document.getElementById("statsLinkedinInput").value = stats.linkedin || "";
+	      document.getElementById("statsRepostsInput").value = stats.reposts || "";
+	      document.getElementById("statsNotesInput").value = stats.notes || "";
 	      document.getElementById("generatedCode").value = idea ? generatedIdeaObject(idea) : "";
 	      document.getElementById("generatedCodeWrap").classList.toggle("is-visible", Boolean(idea));
 	      document.getElementById("ideaFormDialog").showModal();
 	    }
 
-	    function saveIdeaForm(event) {
+	    async function saveIdeaForm(event) {
 	      event.preventDefault();
+	      if (!requireWriteAccess()) return;
 	      const existingId = document.getElementById("editIdeaId").value;
 	      const id = existingId || `LOCAL-${Date.now().toString(36).toUpperCase()}`;
 	      const idea = formIdea(id);
+	      if (usingRemoteData()) {
+	        try {
+	          saveInProgress = true;
+	          const existingIndex = remoteIdeas.findIndex(item => item.id === id);
+	          if (existingIndex >= 0) {
+	            remoteIdeas[existingIndex] = { ...remoteIdeas[existingIndex], ...idea };
+	            const { error } = await supabaseClient
+	              .from(SUPABASE_CONFIG.table)
+	              .update(dbRowFromIdea(remoteIdeas[existingIndex]))
+	              .eq("id", id);
+	            if (error) throw error;
+	          } else {
+	            const remoteIdea = {
+	              ...idea,
+	              sortGroup: "next",
+	              orderRank: 1,
+	              isArchived: false
+	            };
+	            activeOrder.next.unshift(id);
+	            activeOrder = normalizeOrder(activeOrder);
+	            const { error } = await supabaseClient
+	              .from(SUPABASE_CONFIG.table)
+	              .insert(dbRowFromIdea(remoteIdea));
+	            if (error) throw error;
+	            remoteIdeas.unshift(remoteIdea);
+	            document.getElementById("editIdeaId").value = id;
+	            document.getElementById("formModeTag").textContent = "Lagret";
+	            document.getElementById("ideaFormTitle").textContent = "Endre idé";
+	          }
+	          activeOrder = normalizeOrder(activeOrder);
+	          await persistOrder();
+	          await loadRemoteIdeas();
+	          document.getElementById("generatedCode").value = generatedIdeaObject(idea);
+	          document.getElementById("generatedCodeWrap").classList.add("is-visible");
+	          setShareStatus("Lagret for hele teamet");
+	        } catch (error) {
+	          setShareStatus(`Kunne ikke lagre: ${formatSupabaseError(error)}`);
+	        } finally {
+	          saveInProgress = false;
+	        }
+	        return;
+	      }
 	      if (existingId) {
 	        const localIndex = localIdeas.findIndex(item => item.id === id);
 	        if (localIndex >= 0) {
@@ -2870,6 +3434,8 @@
 	            title: idea.title,
 	            timing: idea.timing,
 	            channel: idea.channel,
+	            status: idea.status,
+	            stats: idea.stats,
 	            localBrief: idea.localBrief
 	          });
 	        }
@@ -2890,7 +3456,31 @@
 	    }
 
 	    function removeIdeaLocally(id) {
-	      if (!window.confirm("Fjerne ideen lokalt fra denne visningen?")) return;
+	      if (!requireWriteAccess()) return;
+	      const removeText = usingRemoteData()
+	        ? "Fjerne ideen fra felles teamvisning?"
+	        : "Fjerne ideen lokalt fra denne visningen?";
+	      if (!window.confirm(removeText)) return;
+	      if (usingRemoteData()) {
+	        remoteIdeas = remoteIdeas.map(idea => idea.id === id ? { ...idea, isArchived: true } : idea);
+	        selectedIds.delete(id);
+	        activeOrder.next = activeOrder.next.filter(item => item !== id);
+	        activeOrder.later = activeOrder.later.filter(item => item !== id);
+	        activeOrder = normalizeOrder(activeOrder);
+	        saveSelected();
+	        renderAll();
+	        supabaseClient
+	          .from(SUPABASE_CONFIG.table)
+	          .update({ is_archived: true, updated_at: new Date().toISOString() })
+	          .eq("id", id)
+	          .then(({ error }) => {
+	            if (error) throw error;
+	            return loadRemoteIdeas();
+	          })
+	          .then(() => setShareStatus("Idé fjernet for teamet"))
+	          .catch(error => setShareStatus(`Kunne ikke fjerne: ${formatSupabaseError(error)}`));
+	        return;
+	      }
 	      localIdeas = localIdeas.filter(idea => idea.id !== id);
 	      delete localOverrides[id];
 	      if (ideas.some(idea => idea.id === id)) removedIds.add(id);
@@ -2906,6 +3496,7 @@
 	    }
 
 	    function renderAll() {
+	      renderAuthStrip();
 	      renderShootlist();
 	      renderFunnel();
 	      document.querySelectorAll(".idea-card").forEach(card => {
@@ -2936,6 +3527,7 @@
 	      document.querySelectorAll("[data-edit]").forEach(button => {
 	        button.addEventListener("click", event => {
 	          event.stopPropagation();
+	          if (!requireWriteAccess()) return;
 	          openIdeaForm(event.currentTarget.dataset.edit);
 	        });
 	      });
@@ -3051,7 +3643,7 @@
 	    });
 
 	    makeToolbar("toolbar");
-	    renderAll();
+	    loadRemoteIdeas();
   </script>
 </body>
 </html>
